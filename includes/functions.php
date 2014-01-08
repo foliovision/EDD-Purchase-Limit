@@ -209,12 +209,12 @@ function edd_pl_override_purchase_button( $purchase_form, $args ) {
     }
 
     if( $is_sold_out ) {
-        $purchase_form  = '<form id="' . $form_id . '" class="edd_download_purchase_form" method="post">';
+        $purchase_form  = '<form id="' . $form_id . '" class="edd_download_purchase_form">';
         $purchase_form .= '<div class="edd_purchase_submit_wrapper">';
 
         if( edd_is_ajax_enabled() ) {
             $purchase_form .= sprintf(
-                '<a href="#" class="edd-add-to-cart %1$s"><span class="edd-add-to-cart-label">%2$s</span></a>',
+                '<div class="edd-add-to-cart %1$s"><span>%2$s</span></a>',
                 implode( ' ', array( $args['style'], $args['color'], trim( $args['class'] ) ) ),
                 esc_attr( $sold_out_label )
             );
@@ -248,12 +248,12 @@ function edd_pl_override_purchase_button( $purchase_form, $args ) {
 		}
 
 		if( isset( $date_label ) ) {
-            $purchase_form  = '<form id="' . $form_id . '" class="edd_download_purchase_form" method="post">';
+            $purchase_form  = '<form id="' . $form_id . '" class="edd_download_purchase_form">';
             $purchase_form .= '<div class="edd_purchase_submit_wrapper">';
 
             if( edd_is_ajax_enabled() ) {
                 $purchase_form .= sprintf(
-                    '<a href="#" class="edd-add-to-cart %1$s" disabled><span class="edd-add-to-cart-label">%2$s</span></a>',
+                    '<div class="edd-add-to-cart %1$s"><span>%2$s</span></div>',
                     implode( ' ', array( $args['style'], $args['color'], trim( $args['class'] ) ) ),
                     esc_attr( $date_label )
                 );
