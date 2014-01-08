@@ -425,7 +425,7 @@ function edd_purchase_limit_load() {
         unset( $_GET['activate'] );
 
         // Display notice
-        add_action( 'admin_notices', 'edd_purchase_limits_missing_edd_notice' );
+        add_action( 'admin_notices', 'edd_purchase_limit_missing_edd_notice' );
     } else {
         return EDD_Purchase_Limit::instance();
     }
