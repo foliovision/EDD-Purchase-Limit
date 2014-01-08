@@ -188,12 +188,13 @@ function edd_pl_override_purchase_button( $purchase_form, $args ) {
 
     // Get options
     $sold_out_label = ( isset( $edd_options['edd_purchase_limit_sold_out_label'] ) ? $edd_options['edd_purchase_limit_sold_out_label'] : __( 'Sold Out', 'edd-purchase-limit' ) );
-    $scope = ( isset( $edd_options['edd_purchase_limit_scope'] ) ? $edd_options['edd_purchase_limit_scope'] : 'site-wide' );
+    $scope          = ( isset( $edd_options['edd_purchase_limit_scope'] ) ? $edd_options['edd_purchase_limit_scope'] : 'site-wide' );
+    $form_id        = !empty( $args['form_id'] ) ? $args['form_id'] : 'edd_purchase_' . $args['download_id'];
 
     // Get purchase limits
-    $max_purchases = edd_pl_get_file_purchase_limit( $args['download_id'] );
-	$is_sold_out = false;
-	$date_range = edd_pl_is_date_restricted( $args['download_id'] );
+    $max_purchases  = edd_pl_get_file_purchase_limit( $args['download_id'] );
+	$is_sold_out    = false;
+	$date_range     = edd_pl_is_date_restricted( $args['download_id'] );
 
     if( $scope == 'site-wide' ) {
         $purchases = edd_get_download_sales_stats( $args['download_id'] );
@@ -208,11 +209,24 @@ function edd_pl_override_purchase_button( $purchase_form, $args ) {
     }
 
     if( $is_sold_out ) {
-        $purchase_form = sprintf(
-            '<input type="submit" class="edd-add-to-cart %1$s" name="edd_purchase_download" value="%2$s" disabled />',
-            implode( ' ', array( $args['style'], $args['color'], trim( $args['class'] ) ) ),
-            esc_attr( $sold_out_label )
-		);
+        $purchase_form  = '<form id="' . $form_id . '" class="edd_download_purchase_form" method="post">';
+        $purchase_form .= '<div class="edd_purchase_submit_wrapper">';
+
+        if( edd_is_ajax_enabled() ) {
+            $purchase_form .= sprintf(
+                '<a href="#" class="edd-add-to-cart %1$s"><span class="edd-add-to-cart-label">%2$s</span></a>',
+                implode( ' ', array( $args['style'], $args['color'], trim( $args['class'] ) ) ),
+                esc_attr( $sold_out_label )
+            );
+        } else {
+            $purchase_form .= sprintf(
+                '<input type="submit" class="edd-add-to-cart edd-no-js %1$s" name="edd_purchase_download" value="%2$s" disabled />',
+                implode( ' ', array( $args['style'], $args['color'], trim( $args['class'] ) ) ),
+                esc_attr( $sold_out_label )
+            );
+        }
+
+        $purchase_form .= '</div></form>';
 	} elseif( is_array( $date_range ) ) {
         $today = date( 'm/d/Y' );
         $now = date( 'H:i' );
@@ -225,11 +239,24 @@ function edd_pl_override_purchase_button( $purchase_form, $args ) {
 		}
 
 		if( isset( $date_label ) ) {
-			$purchase_form = sprintf(
-				'<input type="submit" class="edd-add-to-cart %1$s" name="edd_purchase_download" value="%2$s" disabled />',
-				implode( ' ', array( $args['style'], $args['color'], trim( $args['class'] ) ) ),
-			    esc_attr( $date_label )
-			);
+            $purchase_form  = '<form id="' . $form_id . '" class="edd_download_purchase_form" method="post">';
+            $purchase_form .= '<div class="edd_purchase_submit_wrapper">';
+
+            if( edd_is_ajax_enabled() ) {
+                $purchase_form .= sprintf(
+                    '<a href="#" class="edd-add-to-cart %1$s" disabled><span class="edd-add-to-cart-label">%2$s</span></a>',
+                    implode( ' ', array( $args['style'], $args['color'], trim( $args['class'] ) ) ),
+                    esc_attr( $date_label )
+                );
+            } else {
+                $purchase_form .= sprintf(
+                    '<input type="submit" class="edd-add-to-cart edd-no-js %1$s" name="edd_purchase_download" value="%2$s" disabled />',
+                    implode( ' ', array( $args['style'], $args['color'], trim( $args['class'] ) ) ),
+                    esc_attr( $date_label )
+                );
+            }
+
+            $purchase_form .= '</div></form>';
 		} elseif( isset( $edd_options['edd_purchase_limit_show_counts'] ) ) {
 			$label = !empty( $edd_options['add_to_cart_text'] ) ? $edd_options['add_to_cart_text'] : __( 'Purchase', 'edd' );
 			$remaining_label = ( isset( $edd_options['edd_purchase_limit_remaining_label'] ) ? $edd_options['edd_purchase_limit_remaining_label'] : __( 'Remaining', 'edd-purchase-limit' ) );
