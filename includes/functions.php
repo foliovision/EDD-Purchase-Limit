@@ -228,14 +228,23 @@ function edd_pl_override_purchase_button( $purchase_form, $args ) {
 
         $purchase_form .= '</div></form>';
 	} elseif( is_array( $date_range ) ) {
-        $today = date( 'm/d/Y' );
-        $now = date( 'H:i' );
+        $now = date( 'YmdHi' );
 		$date_label = null;
 
-		if( isset( $date_range['start'] ) && ( $date_range['start'][0] > $today || ( $date_range['start'][0] == $today && $date_range['start'][1] > $now ) ) ) {
-			$date_label = ( isset( $edd_options['edd_purchase_limit_pre_date_label'] ) ? $edd_options['edd_purchase_limit_pre_date_label'] : __( 'This product is not yet available!', 'edd-purchase-limit' ) );
-		} elseif( isset( $date_range['end'] ) && ( $date_range['end'][0] < $today || ( $date_range['end'][0] == $today && $date_range['end'][1] < $now ) ) ) {
-			$date_label = ( isset( $edd_options['edd_purchase_limit_post_date_label'] ) ? $edd_options['edd_purchase_limit_post_date_label'] : __( 'This product is no longer available!', 'edd-purchase-limit' ) );
+        if( isset( $date_range['start'] ) ) {
+            $start_time = date( 'YmdHi', strtotime( $date_range['start'][0] . $date_range['start'][1] ) );
+
+            if( $start_time > $now ) {
+                $date_label = ( isset( $edd_options['edd_purchase_limit_pre_date_label'] ) ? $edd_options['edd_purchase_limit_pre_date_label'] : __( 'This product is not yet available!', 'edd-purchase-limit' ) );
+            }
+        }
+        
+        if( isset( $date_range['end'] ) ) {
+            $end_time = date( 'YmdHi', strtotime( $date_range['end'][0] . $date_range['end'][1] ) );
+
+            if( $end_time < $now ) {
+    			$date_label = ( isset( $edd_options['edd_purchase_limit_post_date_label'] ) ? $edd_options['edd_purchase_limit_post_date_label'] : __( 'This product is no longer available!', 'edd-purchase-limit' ) );
+            }
 		}
 
 		if( isset( $date_label ) ) {
