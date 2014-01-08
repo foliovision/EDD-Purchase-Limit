@@ -444,4 +444,4 @@ function edd_purchase_limit_missing_edd_notice() {
 
 
 // Off we go!
-edd_purchase_limit_load();
+add_action( 'plugins_loaded', 'edd_purchase_limit_load' );
