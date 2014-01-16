@@ -86,9 +86,11 @@ function edd_pl_get_file_purchase_limit( $download_id = 0, $type = null, $price_
 		} else {
 			$limit = array();
 
-	        foreach( $prices as $item_id => $item_data ) {
-		        $limit[$item_id] = ( isset( $item_data['purchase_limit'] ) ? absint( $item_data['purchase_limit'] ) : '0' );
-			}
+            if ( $prices ) {
+    	        foreach( $prices as $item_id => $item_data ) {
+    		        $limit[$item_id] = ( isset( $item_data['purchase_limit'] ) ? absint( $item_data['purchase_limit'] ) : '0' );
+    			}
+            }
 		}
     } else {
     	$limit	= get_post_meta( $download_id, '_edd_purchase_limit', true );
@@ -226,7 +228,7 @@ function edd_pl_override_purchase_button( $purchase_form, $args ) {
             );
         }
 
-        $purchase_form .= '</div></form>';
+        $purchase_form .= '</div></div></form>';
 	} elseif( is_array( $date_range ) ) {
         $now = date( 'YmdHi' );
 		$date_label = null;
