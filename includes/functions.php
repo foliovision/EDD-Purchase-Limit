@@ -449,14 +449,16 @@ function edd_pl_override_add_to_cart( $download_id, $options ) {
 		if( $scope == 'site-wide' ) {
 			$purchases = edd_get_download_sales_stats( $download_id );
 
-	        if( ( $max_purchases && $purchases >= $max_purchases ) || !empty( $edd_prices_sold_out ) )
+	        if( ( $max_purchases && $purchases >= $max_purchases ) || !empty( $edd_prices_sold_out ) ) {
 		        $sold_out = true;
 		    } elseif( is_user_logged_in() ) {
 				$purchases = edd_pl_get_user_purchase_count( get_current_user_id(), $download_id );
 
-				if( ( $max_purchases && $purchases >= $max_purchases ) || !empty( $edd_prices_sold_out ) )
+				if( ( $max_purchases && $purchases >= $max_purchases ) || !empty( $edd_prices_sold_out ) ) {
 					$sold_out = true;
+				}
 			}
+		}
 	}
 
 	if( $sold_out === true ) wp_die( sprintf( __( 'This %s is sold out!', 'edd-purchase-limit' ), edd_get_label_singular( true ) ) );
