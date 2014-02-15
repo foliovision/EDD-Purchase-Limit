@@ -18,13 +18,10 @@ if( !defined( 'ABSPATH' ) ) exit;
  * @param		int $download_id The ID for this download
  * @param		int $price_id The price ID for this item
  * @param       string $user_email The email for the purchaser
- * @global		array $edd_options The EDD settings array
  * @return		mixed $purchases
  */
 function edd_pl_get_file_purchases( $download_id = 0, $price_id = 0, $user_email = false ) {
-	global $edd_options;
-
-	$scope = ( isset( $edd_options['edd_purchase_limit_scope'] ) ? $edd_options['edd_purchase_limit_scope'] : 'site-wide' );
+	$scope = edd_get_option( 'edd_purchase_limit_scope' ) ? edd_get_option( 'edd_purchase_limit_scope' ) : 'site-wide';
 
 	// Retrieve all sales of this download
 	$query_args = array(
@@ -68,12 +65,9 @@ function edd_pl_get_file_purchases( $download_id = 0, $price_id = 0, $user_email
  * @param       int $download_id The ID for this download
  * @param       int $type Optional override to force return of a specific type
  * @param		int $price_id The ID for a specific item
- * @global      array $edd_options The EDD settings array
  * @return      mixed $limit File purchase limit
  */
 function edd_pl_get_file_purchase_limit( $download_id = 0, $type = null, $price_id = null ) {
-    global $edd_options;
-
     $ret = 0;
 
     if( edd_has_variable_prices( $download_id ) && ( isset( $type ) && $type == 'standard' ) ) {
@@ -117,8 +111,9 @@ function edd_pl_is_item_sold_out( $download_id = 0, $price_id = 0, $user_email =
 	$max_purchases = edd_pl_get_file_purchase_limit( $download_id, null, $price_id );
 	$purchased = edd_pl_get_file_purchases( $download_id, $price_id );
 
-	if( $purchased >= $max_purchases && $max_purchases > 0 )
+	if( $purchased >= $max_purchases && $max_purchases > 0 ) {
 		$sold_out = true;
+	}
 
 	return $sold_out;
 }
@@ -129,25 +124,24 @@ function edd_pl_is_item_sold_out( $download_id = 0, $price_id = 0, $user_email =
  *
  * @since		1.0.6
  * @param		int $download_id The download ID to check
- * @global		array $edd_options The EDD settings array
  * @return		mixed array if restricted, null otherwise
  */
 function edd_pl_is_date_restricted( $download_id = 0 ) {
-	global $edd_options;
-
     date_default_timezone_set( edd_get_timezone_id() );
     
 	$range = null;
 
-    if( isset( $edd_options['edd_purchase_limit_restrict_date'] ) ) {
+    if( edd_get_option( 'edd_purchase_limit_restrict_date' ) ) {
 		$range['start'] = explode( ' ', get_post_meta( $download_id, '_edd_purchase_limit_start_date', true ) );
         $range['end'] = explode( ' ', get_post_meta( $download_id, '_edd_purchase_limit_end_date', true ) );
 
-        if( isset( $edd_options['edd_purchase_limit_g_start_date'] ) && empty( $range['start'][0] ) )
-            $range['start'] = explode( ' ', $edd_options['edd_purchase_limit_g_start_date'] );
+        if( edd_get_option( 'edd_purchase_limit_g_start_date' ) && empty( $range['start'][0] ) ) {
+			$range['start'] = explode( ' ', edd_get_option( 'edd_purchase_limit_g_start_date') );
+		}
         
-        if( isset( $edd_options['edd_purchase_limit_g_end_date'] ) && empty( $range['end'][0] ) )
-            $range['end'] = explode( ' ', $edd_options['edd_purchase_limit_g_end_date'] );
+        if( edd_get_option( 'edd_purchase_limit_g_end_date' ) && empty( $range['end'][0] ) ) {
+			$range['end'] = explode( ' ', edd_get_option( 'edd_purchase_limit_g_end_date' ) );
+		}
 
         foreach( $range as $key => &$value ) {
             if( is_array( $value ) ) {
@@ -158,15 +152,18 @@ function edd_pl_is_date_restricted( $download_id = 0 ) {
 
         $range = array_filter( $range );
 
-		if( count( $range ) == 0 )
-            $range = null;
+		if( count( $range ) == 0 ) {
+			$range = null;
+		}
 
         // Maintain backwards compatibility
-        if( isset( $range['start'][0] ) && !isset( $range['start'][1] ) )
-            $range['start'][1] = '00:00';
+        if( isset( $range['start'][0] ) && !isset( $range['start'][1] ) ) {
+			$range['start'][1] = '00:00';
+		}
 
-        if( isset( $range['end'][0] ) && !isset( $range['end'][1] ) )
-            $range['end'][1] = '00:00';
+        if( isset( $range['end'][0] ) && !isset( $range['end'][1] ) ) {
+			$range['end'][1] = '00:00';
+		}
 	}
 
 	return $range;
@@ -179,18 +176,17 @@ function edd_pl_is_date_restricted( $download_id = 0 ) {
  * @since       1.0.0
  * @param       string $purchase_form the actual purchase form code
  * @param       array $args the info for the specific download
- * @global      array $edd_options The EDD settings array
  * @global      string $user_email The email address of the current user
  * @global      boolean $edd_prices_sold_out Variable price sold out check
  * @return      string $purchase_form if conditions are not met
  * @return      string $sold_out if conditions are met
  */
 function edd_pl_override_purchase_button( $purchase_form, $args ) {
-    global $edd_options, $user_email, $edd_prices_sold_out;
+    global $user_email, $edd_prices_sold_out;
 
     // Get options
-    $sold_out_label = ( isset( $edd_options['edd_purchase_limit_sold_out_label'] ) ? $edd_options['edd_purchase_limit_sold_out_label'] : __( 'Sold Out', 'edd-purchase-limit' ) );
-    $scope          = ( isset( $edd_options['edd_purchase_limit_scope'] ) ? $edd_options['edd_purchase_limit_scope'] : 'site-wide' );
+    $sold_out_label = edd_get_option( 'edd_purchase_limit_sold_out_label' ) ? edd_get_option( 'edd_purchase_limit_sold_out_label' ) : __( 'Sold Out', 'edd-purchase-limit' );
+    $scope          = edd_get_option( 'edd_purchase_limit_scope' ) ? edd_get_option( 'edd_purchase_limit_scope' ) : 'site-wide';
     $form_id        = !empty( $args['form_id'] ) ? $args['form_id'] : 'edd_purchase_' . $args['download_id'];
 
     // Get purchase limits
@@ -201,13 +197,15 @@ function edd_pl_override_purchase_button( $purchase_form, $args ) {
     if( $scope == 'site-wide' ) {
         $purchases = edd_get_download_sales_stats( $args['download_id'] );
 
-        if( ( $max_purchases && $purchases >= $max_purchases ) || !empty( $edd_prices_sold_out ) )
-            $is_sold_out = true;
+        if( ( $max_purchases && $purchases >= $max_purchases ) || !empty( $edd_prices_sold_out ) ) {
+			$is_sold_out = true;
+		}
     } elseif( is_user_logged_in() ) {
         $purchases = edd_pl_get_user_purchase_count( get_current_user_id(), $args['download_id'] );
 
-        if( ( $max_purchases && $purchases >= $max_purchases ) || !empty( $edd_prices_sold_out ) )
-            $is_sold_out = true;
+        if( ( $max_purchases && $purchases >= $max_purchases ) || !empty( $edd_prices_sold_out ) ) {
+			$is_sold_out = true;
+		}
     }
 
     if( $is_sold_out ) {
@@ -219,7 +217,8 @@ function edd_pl_override_purchase_button( $purchase_form, $args ) {
                 '<div class="edd-add-to-cart %1$s"><span>%2$s</span></a>',
                 implode( ' ', array( $args['style'], $args['color'], trim( $args['class'] ) ) ),
                 esc_attr( $sold_out_label )
-            );
+			);
+			$purchase_form .= '</div>';
         } else {
             $purchase_form .= sprintf(
                 '<input type="submit" class="edd-add-to-cart edd-no-js %1$s" name="edd_purchase_download" value="%2$s" disabled />',
@@ -228,7 +227,7 @@ function edd_pl_override_purchase_button( $purchase_form, $args ) {
             );
         }
 
-        $purchase_form .= '</div></div></form>';
+        $purchase_form .= '</div></form>';
 	} elseif( is_array( $date_range ) ) {
         $now = date( 'YmdHi' );
 		$date_label = null;
@@ -237,7 +236,7 @@ function edd_pl_override_purchase_button( $purchase_form, $args ) {
             $start_time = date( 'YmdHi', strtotime( $date_range['start'][0] . $date_range['start'][1] ) );
 
             if( $start_time > $now ) {
-                $date_label = ( isset( $edd_options['edd_purchase_limit_pre_date_label'] ) ? $edd_options['edd_purchase_limit_pre_date_label'] : __( 'This product is not yet available!', 'edd-purchase-limit' ) );
+                $date_label = edd_get_option( 'edd_purchase_limit_pre_date_label' ) ? edd_get_option( 'edd_purchase_limit_pre_date_label' ) : __( 'This product is not yet available!', 'edd-purchase-limit' );
             }
         }
         
@@ -245,7 +244,7 @@ function edd_pl_override_purchase_button( $purchase_form, $args ) {
             $end_time = date( 'YmdHi', strtotime( $date_range['end'][0] . $date_range['end'][1] ) );
 
             if( $end_time < $now ) {
-    			$date_label = ( isset( $edd_options['edd_purchase_limit_post_date_label'] ) ? $edd_options['edd_purchase_limit_post_date_label'] : __( 'This product is no longer available!', 'edd-purchase-limit' ) );
+    			$date_label = edd_get_option( 'edd_purchase_limit_post_date_label' ) ? edd_get_option( 'edd_purchase_limit_post_date_label' ) : __( 'This product is no longer available!', 'edd-purchase-limit' );
             }
 		}
 
@@ -268,28 +267,30 @@ function edd_pl_override_purchase_button( $purchase_form, $args ) {
             }
 
             $purchase_form .= '</div></form>';
-		} elseif( isset( $edd_options['edd_purchase_limit_show_counts'] ) ) {
-			$label = !empty( $edd_options['add_to_cart_text'] ) ? $edd_options['add_to_cart_text'] : __( 'Purchase', 'edd' );
-			$remaining_label = ( isset( $edd_options['edd_purchase_limit_remaining_label'] ) ? $edd_options['edd_purchase_limit_remaining_label'] : __( 'Remaining', 'edd-purchase-limit' ) );
+		} elseif( edd_get_option( 'edd_purchase_limit_show_counts' ) ) {
+			$label = edd_get_option( 'add_to_cart_text' ) ? edd_get_option( 'add_to_cart_text' ) : __( 'Purchase', 'edd' );
+			$remaining_label = edd_get_option( 'edd_purchase_limit_remaining_label' ) ? edd_get_option( 'edd_purchase_limit_remaining_label' ) : __( 'Remaining', 'edd-purchase-limit' );
 			$variable_pricing = edd_has_variable_prices( $args['download_id'] );
 
 			if( !$variable_pricing ) {
 				$remaining = $max_purchases - $purchases;
 
-				if( $remaining > '0' ) 
+				if( $remaining > '0' ) {
 					$purchase_form = str_replace( $label . '</span>', $label . '</span> <span class="edd-pl-remaining-label">(' . $remaining . ' ' . $remaining_label . ')</span>', $purchase_form );
+				}
 			}
 		}
-	} elseif( isset( $edd_options['edd_purchase_limit_show_counts'] ) ) {
-		$label = !empty( $edd_options['add_to_cart_text'] ) ? $edd_options['add_to_cart_text'] : __( 'Purchase', 'edd' );
-		$remaining_label = ( isset( $edd_options['edd_purchase_limit_remaining_label'] ) ? $edd_options['edd_purchase_limit_remaining_label'] : __( 'Remaining', 'edd-purchase-limit' ) );
+	} elseif( edd_get_option( 'edd_purchase_limit_show_counts' ) ) {
+		$label = edd_get_option( 'add_to_cart_text' ) ? edd_get_option( 'add_to_cart_text' ) : __( 'Purchase', 'edd' );
+		$remaining_label = edd_get_option( 'edd_purchase_limit_remaining_label' ) ? edd_get_option( 'edd_purchase_limit_remaining_label' ) : __( 'Remaining', 'edd-purchase-limit' );
 		$variable_pricing = edd_has_variable_prices( $args['download_id'] );
 
 		if( !$variable_pricing ) {
 			$remaining = $max_purchases - $purchases;
 
-			if( $remaining > '0' ) 
+			if( $remaining > '0' ) {
 				$purchase_form = str_replace( $label . '</span>', $label . '</span> <span class="edd-pl-remaining-label">(' . $remaining . ' ' . $remaining_label . ')</span>', $purchase_form );
+			}
 		}
 	} 
 
@@ -305,19 +306,18 @@ add_filter( 'edd_purchase_download_form', 'edd_pl_override_purchase_button', 200
  *
  * @since       1.0.4
  * @param       int $download_id the ID for the specific download
- * @global      array $edd_options The EDD settings array
  * @global      boolean $edd_prices_sold_out Variable price sold out check
  * @return      string $purchase_form if conditions are not met
  * @return      string $sold_out if conditions are met
  */
 function edd_pl_override_variable_pricing( $download_id = 0 ) {
-    global $edd_options, $edd_prices_sold_out;
+    global $edd_prices_sold_out;
 
     $variable_pricing = edd_has_variable_prices( $download_id );
     if( $variable_pricing ) {
         // Get options
-        $sold_out_label = ( isset( $edd_options['edd_purchase_limit_sold_out_label'] ) ? $edd_options['edd_purchase_limit_sold_out_label'] : __( 'Sold Out', 'edd-purchase-limit' ) );
-        $scope = ( isset( $edd_options['edd_purchase_limit_scope'] ) ? $edd_options['edd_purchase_limit_scope'] : 'site-wide' );
+        $sold_out_label = edd_get_option( 'edd_purchase_limit_sold_out_label' ) ? edd_get_option( 'edd_purchase_limit_sold_out_label' ) : __( 'Sold Out', 'edd-purchase-limit' );
+        $scope = edd_get_option( 'edd_purchase_limit_scope' ) ? edd_get_option( 'edd_purchase_limit_scope' ) : 'site-wide';
         $type = edd_single_price_option_mode( $download_id ) ? 'checkbox' : 'radio';
         $sold_out = array();
 
@@ -354,8 +354,8 @@ function edd_pl_override_variable_pricing( $download_id = 0 ) {
 					$remaining = $max_purchases - $purchases;
 					$remaining_output = null;
 
-					if( isset( $edd_options['edd_purchase_limit_show_counts'] ) && ( $remaining > '0' ) ) {
-						$remaining_label = ( isset( $edd_options['edd_purchase_limit_remaining_label'] ) ? $edd_options['edd_purchase_limit_remaining_label'] : __( 'Remaining', 'edd-purchase-limit' ) );
+					if( edd_get_option( 'edd_purchase_limit_show_counts' ) && ( $remaining > '0' ) ) {
+						$remaining_label = edd_get_option( 'edd_purchase_limit_remaining_label' ) ? edd_get_option( 'edd_purchase_limit_remaining_label' ) : __( 'Remaining', 'edd-purchase-limit' );
 						$remaining_output = ' <span class="edd-pl-variable-remaining-label">(' . $remaining . ' ' . $remaining_label . ')</span>';
 					}
 
@@ -420,14 +420,11 @@ add_action( 'edd_purchase_link_top', 'edd_pl_override_variable_pricing', 10 );
  * @since       1.0.0
  * @param       int $download_id The ID of a specific download
  * @param       array $options The options for this downloads
- * @global      array $edd_options The EDD settings array
  * @return      void
  */
 function edd_pl_override_add_to_cart( $download_id, $options ) {
-	global $edd_options;
-
 	// Get options
-	$scope = ( isset( $edd_options['edd_purchase_limit_scope'] ) ? $edd_options['edd_purchase_limit_scope'] : 'site-wide' );
+	$scope = edd_get_option( 'edd_purchase_limit_scope' ) ? edd_get_option( 'edd_purchase_limit_scope' ) : 'site-wide';
 	$sold_out = false;
 	$cart_items = edd_get_cart_contents();
 
@@ -473,14 +470,11 @@ add_action( 'edd_pre_add_to_cart', 'edd_pl_override_add_to_cart', 200, 2 );
  * @since		1.0.5
  * @param		array $valid_data Valid data for this purchase
  * @param		array $post_data The data for this specific purchase
- * @global      array $edd_options The EDD settings array
  * @return		void
  */
 function edd_pl_check_limit_on_purchase( $valid_data=array(), $post_data=array() ) {
-	global $edd_options;
-
 	// Get options
-	$scope = ( isset( $edd_options['edd_purchase_limit_scope'] ) ? $edd_options['edd_purchase_limit_scope'] : 'site-wide' );
+	$scope = edd_get_option( 'edd_purchase_limit_scope' ) ? edd_get_option( 'edd_purchase_limit_scope' ) : 'site-wide';
 	$sold_out = false;
 	$cart_items = edd_get_cart_contents();
 
@@ -511,13 +505,15 @@ function edd_pl_check_limit_on_purchase( $valid_data=array(), $post_data=array()
 			    } elseif( is_user_logged_in() ) {
 					$purchases = edd_pl_get_user_purchase_count( get_current_user_id(), $item['id'] );
 
-					if( ( $max_purchases && $purchases >= $max_purchases ) || !empty( $edd_prices_sold_out ) )
+					if( ( $max_purchases && $purchases >= $max_purchases ) || !empty( $edd_prices_sold_out ) ) {
 						$sold_out = true;
+					}
 				}
 		}
 
-		if( $sold_out === true ) 
+		if( $sold_out === true ) {
 			edd_set_error( 'purchase_limit_reached', sprintf( __( 'The product \'%s\' is sold out!', 'edd-purchase-limit' ), get_the_title( $item['id'] ) ) );
+		}
 	}
 }
 add_action( 'edd_checkout_error_checks', 'edd_pl_check_limit_on_purchase', 10, 2 );

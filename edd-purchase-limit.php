@@ -3,13 +3,14 @@
  * Plugin Name:     Easy Digital Downloads - Purchase Limit
  * Plugin URI:      https://easydigitaldownloads.com/extension/purchase-limit/
  * Description:     Allows site owners to specify max purchase limits on individual products
- * Version:         1.1.1
+ * Version:         1.2.0
  * Author:          Daniel J Griffiths
- * Author URI:      http://ghost1227.com
+ * Author URI:      http://section214.com
+ * Text Domain:		edd-purchase-limit
  *
  * @package         EDD\PurchaseLimit
- * @author          Daniel J Griffiths <dgriffiths@ghost1227.com>
- * @copyright       2013 Daniel J Griffiths
+ * @author          Daniel J Griffiths <dgriffiths@section214.com>
+ * @copyright       Copyright (c) 2013-2014, Daniel J Griffiths
  */
 
 
@@ -27,7 +28,7 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
     class EDD_Purchase_Limit {
 
         /**
-         * @var         \EDD_Purchase_Limit $instance The one true EDD_Purchase_Limit
+         * @var         EDD_Purchase_Limit $instance The one true EDD_Purchase_Limit
          * @since       1.0.0
          */
         private static $instance;
@@ -38,7 +39,7 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
          *
          * @access      public
          * @since       1.0.1
-         * @return      self::$instance The one true EDD_Purchase_Limit
+         * @return      object self::$instance The one true EDD_Purchase_Limit
          */
         public static function instance() {
             if( !self::$instance ) {
@@ -62,7 +63,7 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
          */
         private function setup_constants() {
             // Plugin version
-            define( 'EDD_PURCHASE_LIMIT_VERSION', '1.1.1' );
+            define( 'EDD_PURCHASE_LIMIT_VERSION', '1.2.0' );
 
             // Plugin path
             define( 'EDD_PURCHASE_LIMIT_DIR', plugin_dir_path( __FILE__ ) );
@@ -80,11 +81,6 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
          * @return      void
          */
         private function includes() {
-            // Load our custom updater
-            if( !class_exists( 'EDD_License' ) ) {
-                require_once EDD_PURCHASE_LIMIT_DIR . 'includes/libraries/EDD_SL/EDD_License_Handler.php';
-            }
-
             // Include scripts
             require_once EDD_PURCHASE_LIMIT_DIR . 'includes/scripts.php';
             require_once EDD_PURCHASE_LIMIT_DIR . 'includes/functions.php';
@@ -97,20 +93,19 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
          *
          * @access      private
          * @since       1.0.1
-         * @global      array $edd_options The EDD settings array
          * @return      void
          */
         private function hooks() {
-            global $edd_options;
-
             // Edit plugin metalinks
             add_filter( 'plugin_row_meta', array( $this, 'plugin_metalinks' ), null, 2 );
 
             // Register settings
             add_filter( 'edd_settings_extensions', array( $this, 'settings' ), 1 );
 
-            // Handle licensing
-            $license = new EDD_License( __FILE__, 'Purchase Limit', EDD_PURCHASE_LIMIT_VERSION, 'Daniel J Griffiths' );
+			// Handle licensing
+			if( class_exists( 'EDD_License' ) ) {
+	            $license = new EDD_License( __FILE__, 'Purchase Limit', EDD_PURCHASE_LIMIT_VERSION, 'Daniel J Griffiths' );
+			}
 
             // Add default purchase limit field to downloads config metabox
             add_action( 'edd_meta_box_fields', array( $this, 'pl_metabox_row' ), 20 );
@@ -176,7 +171,7 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
                 );
 
                 $docs_link = array(
-                    '<a href="http://support.ghost1227.com/section/edd-purchase-limit/" target="_blank">' . __( 'Docs', 'edd-purchase-limit' ) . '</a>'
+                    '<a href="http://section214.com/docs/category/edd-purchase-limit/" target="_blank">' . __( 'Docs', 'edd-purchase-limit' ) . '</a>'
                 );
 
                 $links = array_merge( $links, $help_link, $docs_link );
@@ -192,12 +187,9 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
          * @access      public
          * @since       1.0.0
          * @param       array $settings The existing EDD settings array
-         * @global      array $edd_options The EDD settings array
          * @return      array The modified EDD settings array
          */
         public function settings( $settings ) {
-            global $edd_options;
-
             $new_settings = array(
                 array(
                     'id'    => 'edd_purchase_limit_settings',
@@ -234,7 +226,7 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
 
             $settings = array_merge( $settings, $new_settings );
 
-            if( isset( $edd_options['edd_purchase_limit_show_counts'] ) ) {
+            if( edd_get_option( 'edd_purchase_limit_show_counts' ) ) {
                 $new_settings = array(
                     array(
                         'id'    => 'edd_purchase_limit_remaining_label',
@@ -260,7 +252,7 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
 
             $settings = array_merge( $settings, $new_settings );
 
-            if( isset( $edd_options['edd_purchase_limit_restrict_date'] ) ) {
+            if( edd_get_option( 'edd_purchase_limit_restrict_date' ) ) {
                 $new_settings = array(
                     array(      
                         'id'    => 'edd_purchase_limit_g_start_date',
@@ -329,14 +321,11 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
          *
          * @access      public
          * @since       1.0.6
-         * @global      array $edd_options The EDD settings array
          * @param       int $post_id The ID of this download
          * @return      void
          */
         public function date_metabox_row( $post_id = 0 ) {
-            global $edd_options;
-
-            if( !isset( $edd_options['edd_purchase_limit_restrict_date'] ) ) return;
+            if( !edd_get_option( 'edd_purchase_limit_restrict_date' ) ) return;
 
             $start_date = get_post_meta( $post_id, '_edd_purchase_limit_start_date', true );
             $end_date = get_post_meta( $post_id, '_edd_purchase_limit_end_date', true );
@@ -416,21 +405,18 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
  * @since       1.0.0
  * @return      \EDD_Purchase_Limit The one true EDD_Purchase_Limit
  */
-function edd_purchase_limit_load() {
-    // We need access to deactivate_plugins()
-    include_once ABSPATH . 'wp-admin/includes/plugin.php';
-
+function EDD_Purchase_Limit_load() {
     if( !class_exists( 'Easy_Digital_Downloads' ) ) {
         deactivate_plugins( __FILE__ );
         unset( $_GET['activate'] );
 
         // Display notice
-        add_action( 'admin_notices', 'edd_purchase_limit_missing_edd_notice' );
+        add_action( 'admin_notices', 'EDD_Purchase_Limit_missing_edd_notice' );
     } else {
         return EDD_Purchase_Limit::instance();
     }
 }
-add_action( 'plugins_loaded', 'edd_purchase_limit_load' );
+add_action( 'plugins_loaded', 'EDD_Purchase_Limit_load' );
 
 
 /**
@@ -439,6 +425,6 @@ add_action( 'plugins_loaded', 'edd_purchase_limit_load' );
  * @since       1.0.9
  * @return      void
  */
-function edd_purchase_limit_missing_edd_notice() {
+function EDD_Purchase_Limit_missing_edd_notice() {
     echo '<div class="error"><p>' . __( 'Purchase Limit requires Easy Digital Downloads! Please install it to continue!', 'edd-purchase-limit' ) . '</p></div>';
 }

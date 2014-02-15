@@ -17,14 +17,13 @@ if( !defined( 'ABSPATH' ) ) exit;
  * @since		1.0.1
  * @param       array $atts Arguments to pass to the shortcode
  * @global      object $post The object related to this post
- * @global      array $edd_options The EDD settings array
  * @return      void
  */
 function edd_purchase_limit_remaining_shortcode( $atts ) {
-	global $post, $edd_options;
+	global $post;
 
-	$scope = ( isset( $edd_options['edd_purchase_limit_scope'] ) ? $edd_options['edd_purchase_limit_scope'] : 'site-wide' );
-	$sold_out_label = ( isset( $edd_options['edd_purchase_limit_sold_out_label'] ) ? $edd_options['edd_purchase_limit_sold_out_label'] : __( 'Sold Out', 'edd-purchase-limit' ) );
+	$scope = edd_get_option( 'edd_purchase_limit_scope' ) ? edd_get_option( 'edd_purchase_limit_scope' ) : 'site-wide';
+	$sold_out_label = edd_get_option( 'edd_purchase_limit_sold_out_label' ) ? edd_get_option( 'edd_purchase_limit_sold_out_label' ) : __( 'Sold Out', 'edd-purchase-limit' );
 
 	$defaults = array(
 		'download_id'		=> $post->ID,
