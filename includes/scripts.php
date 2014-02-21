@@ -3,7 +3,7 @@
  * Scripts
  *
  * @package     EDD\PurchaseLimit\Scripts
- * @since		1.0.0
+ * @since       1.0.0
  */
 
 // Exit if accessed directly
@@ -21,12 +21,12 @@ function edd_pl_load_admin_scripts() {
     wp_enqueue_script( 'jquery-ui-slider' );
     wp_enqueue_script( 'edd-pl-timepicker', EDD_PURCHASE_LIMIT_URL . 'assets/js/jquery-ui-timepicker-addon.js', array( 'jquery-ui-datepicker', 'jquery-ui-slider' ) );
     wp_enqueue_script( 'edd-clearable', EDD_PURCHASE_LIMIT_URL . 'assets/js/jquery.clearable.js', array( 'edd-pl-timepicker' ) );
-	wp_enqueue_script( 'edd-pl-admin', EDD_PURCHASE_LIMIT_URL . 'assets/js/admin.js' );
+    wp_enqueue_script( 'edd-pl-admin', EDD_PURCHASE_LIMIT_URL . 'assets/js/admin.js' );
 
-	if( get_user_option( 'admin_color' ) == 'classic' ) {
-		wp_enqueue_style( 'jquery-ui', EDD_PURCHASE_LIMIT_URL . 'assets/css/jquery-ui-classic.css' );
-	} else {
-		wp_enqueue_style( 'jquery-ui', EDD_PURCHASE_LIMIT_URL . 'assets/css/jquery-ui-fresh.css' );
+    if( get_user_option( 'admin_color' ) == 'classic' ) {
+        wp_enqueue_style( 'jquery-ui', EDD_PURCHASE_LIMIT_URL . 'assets/css/jquery-ui-classic.css' );
+    } else {
+        wp_enqueue_style( 'jquery-ui', EDD_PURCHASE_LIMIT_URL . 'assets/css/jquery-ui-fresh.css' );
     }
 
     wp_enqueue_style( 'edd_pl_css', EDD_PURCHASE_LIMIT_URL . 'assets/css/style.css' );

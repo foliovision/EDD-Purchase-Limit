@@ -6,7 +6,7 @@
  * Version:         1.2.0
  * Author:          Daniel J Griffiths
  * Author URI:      http://section214.com
- * Text Domain:		edd-purchase-limit
+ * Text Domain:     edd-purchase-limit
  *
  * @package         EDD\PurchaseLimit
  * @author          Daniel J Griffiths <dgriffiths@section214.com>
@@ -102,10 +102,10 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
             // Register settings
             add_filter( 'edd_settings_extensions', array( $this, 'settings' ), 1 );
 
-			// Handle licensing
-			if( class_exists( 'EDD_License' ) ) {
-	            $license = new EDD_License( __FILE__, 'Purchase Limit', EDD_PURCHASE_LIMIT_VERSION, 'Daniel J Griffiths' );
-			}
+            // Handle licensing
+            if( class_exists( 'EDD_License' ) ) {
+                $license = new EDD_License( __FILE__, 'Purchase Limit', EDD_PURCHASE_LIMIT_VERSION, 'Daniel J Griffiths' );
+            }
 
             // Add default purchase limit field to downloads config metabox
             add_action( 'edd_meta_box_fields', array( $this, 'pl_metabox_row' ), 20 );
