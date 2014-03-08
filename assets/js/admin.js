@@ -8,14 +8,14 @@ jQuery(document).ready(function($) {
 			showButtonPanel: true
 		});
 	}
-    if($('#edd_settings_extensions\\[edd_purchase_limit_g_start_date\\]').length ) {
-		$('#edd_settings_extensions\\[edd_purchase_limit_g_start_date\\]').datetimepicker({
+    if($('#edd_settings\\[edd_purchase_limit_g_start_date\\]').length ) {
+		$('#edd_settings\\[edd_purchase_limit_g_start_date\\]').datetimepicker({
 			dateFormat: dateFormat,
 			showOtherMonths: true,
 			selectOtherMonths: true,
 			showButtonPanel: true
 		});
-		$('#edd_settings_extensions\\[edd_purchase_limit_g_end_date\\]').datetimepicker({
+		$('#edd_settings\\[edd_purchase_limit_g_end_date\\]').datetimepicker({
 			dateFormat: dateFormat,
 			showOtherMonths: true,
 			selectOtherMonths: true,
@@ -23,6 +23,6 @@ jQuery(document).ready(function($) {
 		});
     }
     $('.edd_pl_datepicker').clearable();
-	$('#edd_settings_extensions\\[edd_purchase_limit_g_start_date\\]').clearable();
-	$('#edd_settings_extensions\\[edd_purchase_limit_g_end_date\\]').clearable();
+	$('#edd_settings\\[edd_purchase_limit_g_start_date\\]').clearable();
+	$('#edd_settings\\[edd_purchase_limit_g_end_date\\]').clearable();
 });
