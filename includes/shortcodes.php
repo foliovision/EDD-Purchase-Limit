@@ -35,7 +35,7 @@ function edd_purchase_limit_remaining_shortcode( $atts ) {
     if( $scope == 'site-wide' && $max_purchases ) {
         $purchases = edd_get_download_sales_stats( $atts['download_id'] );
     } elseif( $scope == 'per-user' && $max_purchases ) {
-        $purchases = edd_pl_get_user_purchases_count( get_current_user_id(), $atts['download_id'] );
+        $purchases = edd_pl_get_user_purchase_count( get_current_user_id(), $atts['download_id'] );
     }
 
     if( $purchases < $max_purchases ) {
