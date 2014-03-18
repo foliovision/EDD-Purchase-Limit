@@ -52,6 +52,8 @@ function edd_pl_get_file_purchases( $download_id = 0, $price_id = 0, $user_email
         }
     }
 
+    wp_reset_postdata();
+
     return $purchased;
 }
 
