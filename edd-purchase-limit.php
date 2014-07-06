@@ -3,7 +3,7 @@
  * Plugin Name:     Easy Digital Downloads - Purchase Limit
  * Plugin URI:      https://easydigitaldownloads.com/extension/purchase-limit/
  * Description:     Allows site owners to specify max purchase limits on individual products
- * Version:         1.2.1
+ * Version:         1.2.2
  * Author:          Daniel J Griffiths
  * Author URI:      http://section214.com
  * Text Domain:     edd-purchase-limit
@@ -63,7 +63,7 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
          */
         private function setup_constants() {
             // Plugin version
-            define( 'EDD_PURCHASE_LIMIT_VERSION', '1.2.1' );
+            define( 'EDD_PURCHASE_LIMIT_VERSION', '1.2.2' );
 
             // Plugin path
             define( 'EDD_PURCHASE_LIMIT_DIR', plugin_dir_path( __FILE__ ) );
@@ -179,7 +179,7 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
 
             return $links;
         }
-        
+
 
         /**
          * Add settings
@@ -254,14 +254,14 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
 
             if( edd_get_option( 'edd_purchase_limit_restrict_date' ) ) {
                 $new_settings = array(
-                    array(      
+                    array(
                         'id'    => 'edd_purchase_limit_g_start_date',
                         'name'  => __( 'Global Start Date', 'edd-purchase-limit' ),
                         'desc'  => __( 'Define a global start date', 'edd-purchase-limit' ),
                         'type'  => 'text',
                         'size'  => 'regular'
                     ),
-                    array(      
+                    array(
                         'id'    => 'edd_purchase_limit_g_end_date',
                         'name'  => __( 'Global End Date', 'edd-purchase-limit' ),
                         'desc'  => __( 'Define a global end date', 'edd-purchase-limit' ),
@@ -310,7 +310,7 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
             echo '<p><strong>' . __( 'Purchase Limit:', 'edd-purchase-limit' ) . '</strong></p>';
             echo '<label for="edd_purchase_limit_field">';
             echo '<input type="text" name="_edd_purchase_limit" id="edd_purchase_limit_field" value="' . esc_attr( $purchase_limit ) . '" size="30" style="width: 100px;" placeholder="0" /> ';
-            echo __( 'The maximum number of times a file may be purchased. Leave blank or set to 0 for unlimited.', 'edd-purchase-limit' );
+            echo __( 'Leave blank or set to 0 for unlimited, set to -1 to mark a product as sold out.', 'edd-purchase-limit' );
             echo '</label>';
             echo '</div>';
         }

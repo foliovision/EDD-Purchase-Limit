@@ -42,7 +42,7 @@ function edd_pl_get_file_purchases( $download_id = 0, $price_id = 0, $user_email
     $payments = $query->get_payments();
 
     $purchased = 0;
-    
+
     // Count purchases
     foreach( $payments as $payment_id => $payment_data ) {
         foreach( $payment_data->cart_details as $cart_item ) {
@@ -92,14 +92,15 @@ function edd_pl_get_file_purchase_limit( $download_id = 0, $type = null, $price_
         $limit  = get_post_meta( $download_id, '_edd_purchase_limit', true );
     }
 
-    $ret = !empty( $limit ) ? !is_array( $limit ) ? absint( $limit ) : $limit : 0;
+    $limit = is_numeric( $limit ) ? $limit == -1 ? $limit : absint( $limit ) : 0;
+    $ret   = !empty( $limit ) ? !is_array( $limit ) ? $limit : $limit : 0;
 
     return apply_filters( 'edd_file_purchase_limit', $ret, $download_id );
 }
 
 
 /**
- * Check if an item in a variably priced product is sold out
+ * Check if an item in a product is sold out
  *
  * @since       1.0.0
  * @param       int $download_id The download ID to check
@@ -113,7 +114,7 @@ function edd_pl_is_item_sold_out( $download_id = 0, $price_id = 0, $user_email =
     $max_purchases = edd_pl_get_file_purchase_limit( $download_id, null, $price_id );
     $purchased = edd_pl_get_file_purchases( $download_id, $price_id );
 
-    if( $purchased >= $max_purchases && $max_purchases > 0 ) {
+    if( ( $purchased >= $max_purchases && $max_purchases > 0 ) || $max_purchases == -1 ) {
         $sold_out = true;
     }
 
@@ -130,7 +131,7 @@ function edd_pl_is_item_sold_out( $download_id = 0, $price_id = 0, $user_email =
  */
 function edd_pl_is_date_restricted( $download_id = 0 ) {
     date_default_timezone_set( edd_get_timezone_id() );
-    
+
     $range = null;
 
     if( edd_get_option( 'edd_purchase_limit_restrict_date' ) ) {
@@ -140,7 +141,7 @@ function edd_pl_is_date_restricted( $download_id = 0 ) {
         if( edd_get_option( 'edd_purchase_limit_g_start_date' ) && empty( $range['start'][0] ) ) {
             $range['start'] = explode( ' ', edd_get_option( 'edd_purchase_limit_g_start_date') );
         }
-        
+
         if( edd_get_option( 'edd_purchase_limit_g_end_date' ) && empty( $range['end'][0] ) ) {
             $range['end'] = explode( ' ', edd_get_option( 'edd_purchase_limit_g_end_date' ) );
         }
@@ -241,7 +242,7 @@ function edd_pl_override_purchase_button( $purchase_form, $args ) {
                 $date_label = edd_get_option( 'edd_purchase_limit_pre_date_label' ) ? edd_get_option( 'edd_purchase_limit_pre_date_label' ) : __( 'This product is not yet available!', 'edd-purchase-limit' );
             }
         }
-        
+
         if( isset( $date_range['end'] ) ) {
             $end_time = date( 'YmdHi', strtotime( $date_range['end'][0] . $date_range['end'][1] ) );
 
@@ -294,7 +295,7 @@ function edd_pl_override_purchase_button( $purchase_form, $args ) {
                 $purchase_form = str_replace( $label . '</span>', $label . '</span> <span class="edd-pl-remaining-label">(' . $remaining . ' ' . $remaining_label . ')</span>', $purchase_form );
             }
         }
-    } 
+    }
 
     return $purchase_form;
 }
@@ -397,7 +398,7 @@ function edd_pl_override_variable_pricing( $download_id = 0 ) {
                 echo '</li>';
             }
         }
-    
+
         do_action( 'edd_after_price_options_list', $download_id, $prices, $type );
 
         echo '</ul>';
