@@ -224,7 +224,7 @@ function edd_pl_override_purchase_button( $purchase_form, $args ) {
             $purchase_form .= '</div>';
         } else {
             $purchase_form .= sprintf(
-                '<input type="submit" class="edd-add-to-cart edd-no-js %1$s" name="edd_purchase_download" value="%2$s" disabled />',
+                '<input type="submit" class="edd-no-js %1$s" name="edd_purchase_download" value="%2$s" disabled />',
                 implode( ' ', array( $args['style'], $args['color'], trim( $args['class'] ) ) ),
                 esc_attr( $sold_out_label )
             );
@@ -263,7 +263,7 @@ function edd_pl_override_purchase_button( $purchase_form, $args ) {
                 );
             } else {
                 $purchase_form .= sprintf(
-                    '<input type="submit" class="edd-add-to-cart edd-no-js %1$s" name="edd_purchase_download" value="%2$s" disabled />',
+                    '<input type="submit" class="edd-no-js %1$s" name="edd_purchase_download" value="%2$s" disabled />',
                     implode( ' ', array( $args['style'], $args['color'], trim( $args['class'] ) ) ),
                     esc_attr( $date_label )
                 );
