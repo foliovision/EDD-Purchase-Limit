@@ -3,7 +3,7 @@
  * Plugin Name:     Easy Digital Downloads - Purchase Limit
  * Plugin URI:      https://easydigitaldownloads.com/extension/purchase-limit/
  * Description:     Allows site owners to specify max purchase limits on individual products
- * Version:         1.2.2
+ * Version:         1.2.3
  * Author:          Daniel J Griffiths
  * Author URI:      http://section214.com
  * Text Domain:     edd-purchase-limit
@@ -63,7 +63,7 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
          */
         private function setup_constants() {
             // Plugin version
-            define( 'EDD_PURCHASE_LIMIT_VERSION', '1.2.2' );
+            define( 'EDD_PURCHASE_LIMIT_VERSION', '1.2.3' );
 
             // Plugin path
             define( 'EDD_PURCHASE_LIMIT_DIR', plugin_dir_path( __FILE__ ) );
