@@ -21,6 +21,11 @@ if( !defined( 'ABSPATH' ) ) exit;
  * @return      mixed $purchases
  */
 function edd_pl_get_file_purchases( $download_id = 0, $price_id = 0, $user_email = false ) {
+
+    global $post;
+
+    $post_old = $post;
+
     $scope = edd_get_option( 'edd_purchase_limit_scope' ) ? edd_get_option( 'edd_purchase_limit_scope' ) : 'site-wide';
 
     // Retrieve all sales of this download
@@ -53,6 +58,7 @@ function edd_pl_get_file_purchases( $download_id = 0, $price_id = 0, $user_email
     }
 
     wp_reset_postdata();
+    $post = $post_old;
 
     return $purchased;
 }
