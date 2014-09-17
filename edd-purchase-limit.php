@@ -367,11 +367,11 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
          */
         public function price_row( $post_id = 0, $price_key = 0, $args = array() ) {
             $prices         = edd_get_variable_prices( $post_id );
-            $purchase_limit = edd_pl_get_file_purchase_limit( $post_id, 'variable' );
+            $purchase_limit = edd_pl_get_file_purchase_limit( $post_id, 'variable', $price_key );
 
             echo '<td class="edd_purchase_limit_var_field">';
             echo '<label for="edd_variable_prices[' . $price_key . '][purchase_limit]">';
-            echo '<input type="text" value="' . $purchase_limit[$price_key] . '" id="edd_variable_prices[' . $price_key . '][purchase_limit]" name="edd_variable_prices[' . $price_key . '][purchase_limit]" style="float:left;width:100px;" placeholder="0" />';
+            echo '<input type="text" value="' . $purchase_limit . '" id="edd_variable_prices[' . $price_key . '][purchase_limit]" name="edd_variable_prices[' . $price_key . '][purchase_limit]" style="float:left;width:100px;" placeholder="0" />';
             echo '</label>';
             echo '</td>';
         }
