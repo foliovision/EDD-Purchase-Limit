@@ -467,6 +467,14 @@ function edd_pl_override_add_to_cart( $download_id, $options ) {
                     $sold_out = true;
                 }
             }
+        } else {
+            if( is_user_logged_in() ) {
+                $purchases = edd_pl_get_user_purchase_count( get_current_user_id(), $download_id );
+
+                if( ( $max_purchases && $purchases >= $max_purchases ) || !empty( $edd_prices_sold_out ) ) {
+                    $sold_out = true;
+                }
+            }
         }
     }
 
