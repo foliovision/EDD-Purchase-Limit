@@ -117,6 +117,9 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
             // Add options to variable pricing table
             add_action( 'edd_download_price_table_row', array( $this, 'price_row' ), 20, 3 );
 
+            // Add variable pricing global disable field
+            add_action( 'edd_after_price_field', array( $this, 'variable_disable' ), 20, 1 );
+
             // Add purchase limit to saved fields
             add_filter( 'edd_metabox_fields_save', array( $this, 'save_fields' ) );
         }
@@ -384,6 +387,24 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
 
 
         /**
+         * Add field to allow globally disabling product on sold out variable
+         *
+         * @access      public
+         * @since       1.2.7
+         * @param       int $post_id The ID of this post
+         * @return      void
+         */
+        public function variable_disable( $post_id = 0 ) {
+            $disabled = get_post_meta( $post_id, '_edd_purchase_limit_variable_disable', true );
+
+            echo '<p>';
+            echo '<input type="checkbox" name="_edd_purchase_limit_variable_disable" id="_edd_purchase_limit_variable_disable" value="1" ' . checked( true, $disabled, false ) . ' />&nbsp;';
+            echo '<label for="_edd_purchase_limit_variable_disable">' . __( 'Disable product when any item sells out', 'edd-purchase-limit' ) . '</label>';
+            echo '</p>';
+        }
+
+
+        /**
          * Add purchase limit to saved fields
          *
          * @access      public
@@ -396,6 +417,7 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
                 '_edd_purchase_limit',
                 '_edd_purchase_limit_start_date',
                 '_edd_purchase_limit_end_date',
+                '_edd_purchase_limit_variable_disable'
             );
 
             return array_merge( $fields, $extra_fields );

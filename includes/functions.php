@@ -339,13 +339,25 @@ function edd_pl_override_variable_pricing( $download_id = 0 ) {
         echo '<ul>';
 
         if( $prices ) {
+            $disable_all    = get_post_meta( $download_id, '_edd_purchase_limit_variable_disable', true );
+            $disabled       = false;
+
+            if( $disable_all ) {
+                foreach( $prices as $price_id => $price_data ) {
+                    if( edd_pl_is_item_sold_out( $download_id, $price_id ) ) {
+                        $disabled = true;
+                        break;
+                    }
+                }
+            }
+
             foreach( $prices as $price_id => $price_data ) {
 
                 // Output label
                 echo '<li id="edd_price_option_' . $download_id . '_' . sanitize_key( $price_data['name'] ) . '">';
 
                 // Output option or 'sold out'
-                if( edd_pl_is_item_sold_out( $download_id, $price_id ) ) {
+                if( edd_pl_is_item_sold_out( $download_id, $price_id ) || $disabled ) {
                     // Update $sold_out
                     $sold_out[] = $price_id;
 

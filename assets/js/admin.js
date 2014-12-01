@@ -31,6 +31,17 @@ jQuery(document).ready(function($) {
 	$("input[name='edd_settings[edd_purchase_limit_g_start_date]']").clearable();
 	$("input[name='edd_settings[edd_purchase_limit_g_end_date]']").clearable();
 
+    // Metabox globally disable
+    $("input[name='_variable_pricing']").change(function () {
+        var selectedItem = $("input[name='_variable_pricing']").is(':checked');
+
+        if (selectedItem === true) {
+            $("input[name='_edd_purchase_limit_variable_disable']").closest('p').css('display', 'block');
+        } else {
+            $("input[name='_edd_purchase_limit_variable_disable']").closest('p').css('display', 'none');
+        }
+    }).change();
+
     // Show remaining settings
     $("input[name='edd_settings[edd_purchase_limit_show_counts]']").change(function () {
         var selectedItem = $("input[name='edd_settings[edd_purchase_limit_show_counts]']").is(':checked');
