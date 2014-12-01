@@ -478,7 +478,25 @@ function edd_pl_override_add_to_cart( $download_id, $options ) {
         }
     }
 
-    if( $sold_out === true ) wp_die( sprintf( __( 'This %s is sold out!', 'edd-purchase-limit' ), edd_get_label_singular( true ) ) );
+    if( $sold_out === true ) {
+        if( edd_get_option( 'edd_purchase_limit_error_handler', 'std' ) == 'redirect' ) {
+            $message        = sprintf( __( 'This %s is sold out!', 'edd-purchase-limit' ), edd_get_label_singular( true ) );
+            $message        = edd_get_option( 'edd_purchase_limit_error_message', $message );
+            $redirect_url   = edd_get_option( 'edd_purchase_limit_redirect_url', false );
+
+            if( $redirect_url ) {
+                wp_redirect( get_permalink( $redirect_url ) );
+                exit;
+            } else {
+                wp_die( $message );
+            }
+        } else {
+            $message = sprintf( __( 'This %s is sold out!', 'edd-purchase-limit' ), edd_get_label_singular( true ) );
+            $message = edd_get_option( 'edd_purchase_limit_error_message', $message );
+
+            wp_die( $message );
+        }
+    }
 }
 add_action( 'edd_pre_add_to_cart', 'edd_pl_override_add_to_cart', 200, 2 );
 
