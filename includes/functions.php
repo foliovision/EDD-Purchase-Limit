@@ -124,6 +124,14 @@ function edd_pl_is_item_sold_out( $download_id = 0, $price_id = 0, $user_email =
         $sold_out = true;
     }
 
+    if( edd_item_in_cart( $download_id, array( 'price_id' => $price_id ) ) ) {
+        $purchased++;
+
+        if( $purchased >= $max_purchases && $max_purchases > 0 ) {
+            $sold_out = true;
+        }
+    }
+
     return $sold_out;
 }
 
@@ -478,6 +486,14 @@ function edd_pl_override_add_to_cart( $download_id, $options ) {
                 if( ( $max_purchases && $purchases >= $max_purchases ) || !empty( $edd_prices_sold_out ) ) {
                     $sold_out = true;
                 }
+
+                if( edd_item_in_cart( $download_id ) ) {
+                    $purchases++;
+
+                    if( $purchases >= $max_purchases ) {
+                        $sold_out = true;
+                    }
+                }
             }
         } else {
             if( is_user_logged_in() ) {
@@ -485,6 +501,14 @@ function edd_pl_override_add_to_cart( $download_id, $options ) {
 
                 if( ( $max_purchases && $purchases >= $max_purchases ) || !empty( $edd_prices_sold_out ) ) {
                     $sold_out = true;
+                }
+
+                if( edd_item_in_cart( $download_id ) ) {
+                    $purchases++;
+
+                    if( $purchases >= $max_purchases ) {
+                        $sold_out = true;
+                    }
                 }
             }
         }
