@@ -497,6 +497,7 @@ function edd_pl_override_add_to_cart( $download_id, $options ) {
         }
 
         if( edd_item_in_cart( $download_id ) ) {
+            $purchases = edd_get_cart_item_quantity( $download_id );
             $purchases++;
 
             if( $purchases >= $max_purchases ) {
