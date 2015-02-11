@@ -460,7 +460,6 @@ function edd_pl_override_add_to_cart( $download_id, $options ) {
     $variable_pricing = edd_has_variable_prices( $download_id );
 
     if( $variable_pricing ) {
-
         // Get variable prices
         $prices = apply_filters( 'edd_purchase_variable_prices', edd_get_variable_prices( $download_id ), $download_id );
 
@@ -486,14 +485,6 @@ function edd_pl_override_add_to_cart( $download_id, $options ) {
                 if( ( $max_purchases && $purchases >= $max_purchases ) || !empty( $edd_prices_sold_out ) ) {
                     $sold_out = true;
                 }
-
-                if( edd_item_in_cart( $download_id ) ) {
-                    $purchases++;
-
-                    if( $purchases >= $max_purchases ) {
-                        $sold_out = true;
-                    }
-                }
             }
         } else {
             if( is_user_logged_in() ) {
@@ -502,14 +493,14 @@ function edd_pl_override_add_to_cart( $download_id, $options ) {
                 if( ( $max_purchases && $purchases >= $max_purchases ) || !empty( $edd_prices_sold_out ) ) {
                     $sold_out = true;
                 }
+            }
+        }
 
-                if( edd_item_in_cart( $download_id ) ) {
-                    $purchases++;
+        if( edd_item_in_cart( $download_id ) ) {
+            $purchases++;
 
-                    if( $purchases >= $max_purchases ) {
-                        $sold_out = true;
-                    }
-                }
+            if( $purchases >= $max_purchases ) {
+                $sold_out = true;
             }
         }
     }
