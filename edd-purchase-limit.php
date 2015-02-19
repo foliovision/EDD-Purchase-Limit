@@ -96,9 +96,6 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
          * @return      void
          */
         private function hooks() {
-            // Edit plugin metalinks
-            add_filter( 'plugin_row_meta', array( $this, 'plugin_metalinks' ), null, 2 );
-
             // Register settings
             add_filter( 'edd_settings_extensions', array( $this, 'settings' ), 1 );
 
@@ -155,32 +152,6 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
                 // Load the default language files
                 load_plugin_textdomain( 'edd-purchase-limit', false, $lang_dir );
             }
-        }
-
-
-        /**
-         * Modify plugin metalinks
-         *
-         * @access      public
-         * @since       1.0.6
-         * @param       array $links The current links array
-         * @param       string $file A specific plugin table entry
-         * @return      array $links The modified links array
-         */
-        public function plugin_metalinks( $links, $file ) {
-            if( $file == plugin_basename( __FILE__ ) ) {
-                $help_link = array(
-                    '<a href="https://easydigitaldownloads.com/support/forum/add-on-plugins/purchase-limits-extension/" target="_blank">' . __( 'Support Forum', 'edd-purchase-limit' ) . '</a>'
-                );
-
-                $docs_link = array(
-                    '<a href="http://section214.com/docs/category/edd-purchase-limit/" target="_blank">' . __( 'Docs', 'edd-purchase-limit' ) . '</a>'
-                );
-
-                $links = array_merge( $links, $help_link, $docs_link );
-            }
-
-            return $links;
         }
 
 
