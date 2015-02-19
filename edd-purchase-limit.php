@@ -404,7 +404,7 @@ if( !class_exists( 'EDD_Purchase_Limit' ) ) {
  * @since       1.0.0
  * @return      \EDD_Purchase_Limit The one true EDD_Purchase_Limit
  */
-function EDD_Purchase_Limit_load() {
+function EDD_Purchase_Limit() {
     if( !class_exists( 'Easy_Digital_Downloads' ) ) {
         if( !class_exists( 'S214_EDD_Activation' ) ) {
             require_once( 'includes/class.s214-edd-activation.php' );
@@ -416,4 +416,4 @@ function EDD_Purchase_Limit_load() {
         return EDD_Purchase_Limit::instance();
     }
 }
-add_action( 'plugins_loaded', 'EDD_Purchase_Limit_load' );
+add_action( 'plugins_loaded', 'EDD_Purchase_Limit' );
