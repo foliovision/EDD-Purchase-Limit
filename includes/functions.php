@@ -622,7 +622,7 @@ function edd_pl_get_user_purchase_count( $user_id, $download_id, $variable_price
 
 
 /**
- * Override the standard quantity field
+ * Override the standard quantity field for variably priced products
  *
  * @since       1.2.10
  * @param       int $key The price ID of this download
@@ -659,3 +659,66 @@ function edd_pl_variable_price_quantity_field( $key, $price, $download_id ) {
     echo '</div>';
 }
 add_action( 'edd_after_price_option', 'edd_pl_variable_price_quantity_field', 10, 3 );
+
+
+/**
+ * Override the standard quantity field for non-variably priced products
+ *
+ * @since       1.2.10
+ * @param       int $download_id The ID of this download
+ * @param       array $args Array of arguments
+ * @return      void
+ */
+function edd_pl_download_purchase_form_quantity_field( $download_id = 0, $args = array() ) {
+    global $edd_prices_sold_out;
+
+    if( ! edd_item_quantities_enabled() ) {
+        return;
+    }
+
+    if( edd_item_in_cart( $download_id ) && ! edd_has_variable_prices( $download_id ) ) {
+        return;
+    }
+
+    if( edd_single_price_option_mode( $download_id ) && edd_has_variable_prices( $download_id ) && ! edd_item_in_cart( $download_id ) ) {
+        return;
+    }
+
+    if( edd_single_price_option_mode( $download_id ) && edd_has_variable_prices( $download_id ) && edd_item_in_cart( $download_id ) ) {
+        return;
+    }
+
+    if( ! edd_single_price_option_mode( $download_id ) && edd_has_variable_prices( $download_id ) && edd_item_in_cart( $download_id ) ) {
+        return;
+    }
+
+    // Get options
+    $scope = edd_get_option( 'edd_purchase_limit_scope' ) ? edd_get_option( 'edd_purchase_limit_scope' ) : 'site-wide';
+    $max_purchases = edd_pl_get_file_purchase_limit( $download_id );
+    $disabled = '';
+
+    if( $scope == 'site-wide' ) {
+        $purchases = edd_get_download_sales_stats( $download_id );
+    } elseif( is_user_logged_in() ) {
+        $purchases = edd_pl_get_user_purchase_count( get_current_user_id(), $download_id );
+    }
+
+    if( $purchases ) {
+        if( ( $max_purchases && $purchases >= $max_purchases ) || ! empty( $edd_prices_sold_out ) ) {
+            $disabled = 'disabled="disabled"';
+        }
+    }
+
+    $max = 'max="" ';
+
+    if( $max_purchases ) {
+        $remaining = $max_purchases - $purchases;
+        $max = 'max="' . $remaining . '" ';
+    }
+
+	echo '<div class="edd_download_quantity_wrapper">';
+	echo '<input type="number" min="1" ' . $max . 'step="1" ' . $disabled . 'name="edd_download_quantity" class="edd-input edd-item-quantity" value="1" />';
+    echo '</div>';
+}
+remove_action( 'edd_purchase_link_top', 'edd_download_purchase_form_quantity_field', 10, 2 );
+add_action( 'edd_purchase_link_top', 'edd_pl_download_purchase_form_quantity_field', 10, 2 );
