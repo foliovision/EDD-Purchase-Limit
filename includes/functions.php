@@ -722,3 +722,64 @@ function edd_pl_download_purchase_form_quantity_field( $download_id = 0, $args =
 }
 remove_action( 'edd_purchase_link_top', 'edd_download_purchase_form_quantity_field', 10, 2 );
 add_action( 'edd_purchase_link_top', 'edd_pl_download_purchase_form_quantity_field', 10, 2 );
+
+
+/**
+ * Ensure cart quantities are OK
+ *
+ * @since       1.0.0
+ * @return      void
+ */
+function edd_pl_checkout_errors( $valid_data, $posted ) {
+    global $edd_prices_sold_out;
+
+    $cart = edd_get_cart_contents();
+    $scope = edd_get_option( 'edd_purchase_limit_scope' ) ? edd_get_option( 'edd_purchase_limit_scope' ) : 'site-wide';
+    $error = false;
+
+    foreach( $cart as $item ) {
+        if( edd_has_variable_prices( $item['id'] ) ) {
+            if( edd_pl_is_item_sold_out( $item['id'], $item['options']['price_id'] ) ) {
+                $error = true;
+            }
+        } else {
+            $max_purchases = edd_pl_get_file_purchase_limit( $item['id'] );
+
+            if( $scope == 'site-wide' ) {
+                $purchases = edd_get_download_sales_stats( $item['id'] );
+
+                if( ( $max_purchases && $purchases >= $max_purchases ) || ! empty( $edd_prices_sold_out ) ) {
+                    $error = true;
+                } elseif( is_user_logged_in() ) {
+                    $purchases = edd_pl_get_user_purchase_count( get_current_user_id(), $item['id'] );
+
+                    if( ( $max_purchases && $purchases >= $max_purchases ) || ! empty( $edd_prices_sold_out ) ) {
+                        $error = true;
+                    }
+                }
+            } else {
+                if( is_user_logged_in() ) {
+                    $purchases = edd_pl_get_user_purchase_count( get_current_user_id(), $item['id'] );
+
+                    if( ( $max_purchases && $purchases >= $max_purchases ) || ! empty( $edd_prices_sold_out ) ) {
+                        $error = true;
+                    }
+                }
+            }
+        }
+
+        if( edd_item_in_cart( $item['id'] ) ) {
+            $cart_qty = edd_get_cart_item_quantity( $item['id'] );
+            $purchases = $purchases + $cart_qty;
+
+            if( $purchases >= $max_purchases ) {
+                $error = true;
+            }
+        }
+    }
+
+    if( $error ) {
+        edd_set_error( 'purchase_limit_reached', __( 'One or more of the products in your cart is sold out!', 'edd-purchase-limit' ) );
+    }
+}
+add_action( 'edd_checkout_error_checks', 'edd_pl_checkout_errors', 10, 2 );
