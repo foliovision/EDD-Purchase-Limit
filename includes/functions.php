@@ -400,6 +400,7 @@ function edd_pl_override_variable_pricing( $download_id = 0 ) {
                     );
                 }
 
+                remove_action( 'edd_after_price_option', 'edd_variable_price_quantity_field', 10, 3 );
                 do_action( 'edd_after_price_option', $price_id, $price_data, $download_id );
                 echo '</li>';
             }
@@ -420,6 +421,7 @@ function edd_pl_override_variable_pricing( $download_id = 0 ) {
                     checked( isset( $_GET['price_option'] ), $price_id, false )
                 );
 
+                remove_action( 'edd_after_price_option', 'edd_variable_price_quantity_field', 10, 3 );
                 do_action( 'edd_after_price_option', $price_id, $price_data, $download_id );
                 echo '</li>';
             }
@@ -617,3 +619,43 @@ function edd_pl_get_user_purchase_count( $user_id, $download_id, $variable_price
 
     return $count;
 }
+
+
+/**
+ * Override the standard quantity field
+ *
+ * @since       1.2.10
+ * @param       int $key The price ID of this download
+ * @param       array $price The price option array
+ * @param       int $download_id The ID of this download
+ * @return      void
+ */
+function edd_pl_variable_price_quantity_field( $key, $price, $download_id ) {
+    if( ! edd_item_quantities_enabled() ) {
+        return;
+    }
+
+    if( ! edd_single_price_option_mode() ) {
+        return;
+    }
+
+    // Get options
+    $scope = edd_get_option( 'edd_purchase_limit_scope' ) ? edd_get_option( 'edd_purchase_limit_scope' ) : 'site-wide';
+    $sold_out = array();
+    $disabled = ( edd_pl_is_item_sold_out( $download_id, $key ) ? 'disabled="disabled" ' : '' );
+    $max_purchases = edd_pl_get_file_purchase_limit( $download_id, null, $key );
+    $max = 'max="" ';
+
+    if( $max_purchases ) {
+        $purchases = edd_pl_get_file_purchases( $download_id, $key );
+        $remaining = $max_purchases - $purchases;
+        $max = 'max="' . $remaining . '" ';
+    }
+
+
+	echo '<div class="edd_download_quantity_wrapper edd_download_quantity_price_option_' . sanitize_key( $price['name'] ) . '">';
+	echo '<span class="edd_price_option_sep">&nbsp;x&nbsp;</span>';
+	echo '<input type="number" min="1" ' . $max . 'step="1" ' . $disabled . 'name="edd_download_quantity_' . esc_attr( $key ) . '" class="edd-input edd-item-quantity" value="1" />';
+    echo '</div>';
+}
+add_action( 'edd_after_price_option', 'edd_pl_variable_price_quantity_field', 10, 3 );
