@@ -609,7 +609,7 @@ function edd_pl_get_user_purchase_count( $user_id, $download_id, $variable_price
             $purchased_files = edd_get_payment_meta_downloads( $purchase->ID );
             if( is_array( $purchased_files ) ) {
                 foreach( $purchased_files as $download ) {
-                    if( in_array( $download['id'], $download_id ) ) {
+                    if( isset( $download['id'] ) && in_array( $download['id'], $download_id ) ) {
                         $count++;
                     }
                 }
