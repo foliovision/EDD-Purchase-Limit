@@ -41,9 +41,7 @@ class S214_EDD_Activation {
         $this->plugin_file = $plugin_file;
 
         // Set plugin name
-        if( isset( $plugins[$this->plugin_path . '/' . $this->plugin_file]['Name'] ) ) {
-            $this->plugin_name = str_replace( 'Easy Digital Downloads - ', '', $plugins[$this->plugin_path . '/' . $this->plugin_file]['Name'] );
-        }
+        $this->plugin_name = str_replace( 'Easy Digital Downloads - ', '', $plugins[$this->plugin_path . '/' . $this->plugin_file]['Name'] );
 
         // Is EDD installed?
         foreach( $plugins as $plugin_path => $plugin ) {
