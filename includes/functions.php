@@ -781,11 +781,13 @@ function edd_pl_checkout_errors( $valid_data, $posted ) {
                 $purchases = edd_pl_get_file_purchases( $item['id'], $item['options']['price_id'] );
             }
 
-            $cart_qty = edd_get_cart_item_quantity( $item['id'] );
-            $purchases = $purchases + $cart_qty;
+            if( $max_purchases > 0 ) {
+                $cart_qty = edd_get_cart_item_quantity( $item['id'] );
+                $purchases = $purchases + $cart_qty;
 
-            if( $purchases > $max_purchases ) {
-                $error = true;
+                if( $purchases > $max_purchases ) {
+                    $error = true;
+                }
             }
         }
     }
