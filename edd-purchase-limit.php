@@ -412,6 +412,8 @@ function EDD_Purchase_Limit() {
 
         $activation = new S214_EDD_Activation( plugin_dir_path( __FILE__ ), basename( __FILE__ ) );
         $activation = $activation->run();
+
+        return EDD_Purchase_Limit::instance();
     } else {
         return EDD_Purchase_Limit::instance();
     }
