@@ -1,220 +1,230 @@
+# Copyright (C) 2015 Easy Digital Downloads - Purchase Limit
+# This file is distributed under the same license as the Easy Digital Downloads - Purchase Limit package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Easy Digital Downloads - Purchase Limit\n"
-"POT-Creation-Date: 2014-12-04 00:18-0600\n"
-"PO-Revision-Date: 2014-12-04 00:18-0600\n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Language: en\n"
+"Project-Id-Version: Easy Digital Downloads - Purchase Limit 1.2.11\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/edd-purchase-"
+"limit\n"
+"POT-Creation-Date: 2015-03-13 11:50:36+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.7\n"
-"X-Poedit-Basepath: ..\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
-"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
-"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-SearchPath-0: .\n"
+"PO-Revision-Date: 2015-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: edd-purchase-limit.php:173
-msgid "Support Forum"
-msgstr ""
-
-#: edd-purchase-limit.php:177
-msgid "Docs"
-msgstr ""
-
-#: edd-purchase-limit.php:199
+#: edd-purchase-limit.php:171
 msgid "Purchase Limit Settings"
 msgstr ""
 
-#: edd-purchase-limit.php:200
+#: edd-purchase-limit.php:172
 msgid "Configure Purchase Limit Settings"
 msgstr ""
 
-#: edd-purchase-limit.php:205
+#: edd-purchase-limit.php:177
 msgid "Sold Out Button Label"
 msgstr ""
 
-#: edd-purchase-limit.php:206
+#: edd-purchase-limit.php:178
 msgid "Enter the text you want to use for the button on sold out items"
 msgstr ""
 
-#: edd-purchase-limit.php:209 includes/functions.php:197
-#: includes/functions.php:328 includes/shortcodes.php:26
+#: edd-purchase-limit.php:181 includes/functions.php:212
+#: includes/functions.php:343 includes/shortcodes.php:26
 msgid "Sold Out"
 msgstr ""
 
-#: edd-purchase-limit.php:213
+#: edd-purchase-limit.php:185
 msgid "Scope"
 msgstr ""
 
-#: edd-purchase-limit.php:214
+#: edd-purchase-limit.php:186
 msgid "Choose whether you want purchase limits to apply site-wide or per-user"
 msgstr ""
 
-#: edd-purchase-limit.php:217
+#: edd-purchase-limit.php:189
 msgid "Site Wide"
 msgstr ""
 
-#: edd-purchase-limit.php:218
+#: edd-purchase-limit.php:190
 msgid "Per User"
 msgstr ""
 
-#: edd-purchase-limit.php:224
+#: edd-purchase-limit.php:196
 msgid "Show Remaining Purchases"
 msgstr ""
 
-#: edd-purchase-limit.php:225
+#: edd-purchase-limit.php:197
 msgid ""
 "Specify whether or not you want to display remaining purchase counts on "
 "downloads"
 msgstr ""
 
-#: edd-purchase-limit.php:230
+#: edd-purchase-limit.php:202
 msgid "Remaining Purchases Label"
 msgstr ""
 
-#: edd-purchase-limit.php:231
+#: edd-purchase-limit.php:203
 msgid "Enter the text you want to use for the remaining purchases label"
 msgstr ""
 
-#: edd-purchase-limit.php:234 includes/functions.php:281
-#: includes/functions.php:294 includes/functions.php:379
+#: edd-purchase-limit.php:206 includes/functions.php:296
+#: includes/functions.php:309 includes/functions.php:394
 msgid "Remaining"
 msgstr ""
 
-#: edd-purchase-limit.php:238
+#: edd-purchase-limit.php:210
 msgid "Enable Date Restriction"
 msgstr ""
 
-#: edd-purchase-limit.php:239
+#: edd-purchase-limit.php:211
 msgid "Specify whether or not to enable restriction by date range"
 msgstr ""
 
-#: edd-purchase-limit.php:244
+#: edd-purchase-limit.php:216
 msgid "Global Start Date"
 msgstr ""
 
-#: edd-purchase-limit.php:245
+#: edd-purchase-limit.php:217
 msgid "Define a global start date"
 msgstr ""
 
-#: edd-purchase-limit.php:251
+#: edd-purchase-limit.php:223
 msgid "Global End Date"
 msgstr ""
 
-#: edd-purchase-limit.php:252
+#: edd-purchase-limit.php:224
 msgid "Define a global end date"
 msgstr ""
 
-#: edd-purchase-limit.php:258
+#: edd-purchase-limit.php:230
 msgid "Pre-Date Label"
 msgstr ""
 
-#: edd-purchase-limit.php:259
+#: edd-purchase-limit.php:231
 msgid "Enter the text you want to use for items which are not yet available"
 msgstr ""
 
-#: edd-purchase-limit.php:262 includes/functions.php:248
+#: edd-purchase-limit.php:234 includes/functions.php:263
 msgid "This product is not yet available!"
 msgstr ""
 
-#: edd-purchase-limit.php:266
+#: edd-purchase-limit.php:238
 msgid "Post-Date Label"
 msgstr ""
 
-#: edd-purchase-limit.php:267
+#: edd-purchase-limit.php:239
 msgid "Enter the text you want to use for items which are no longer available"
 msgstr ""
 
-#: edd-purchase-limit.php:270 includes/functions.php:256
+#: edd-purchase-limit.php:242 includes/functions.php:271
 msgid "This product is no longer available!"
 msgstr ""
 
-#: edd-purchase-limit.php:274
+#: edd-purchase-limit.php:246
 msgid "Error Handler"
 msgstr ""
 
-#: edd-purchase-limit.php:275
+#: edd-purchase-limit.php:247
 msgid "How should we handle non-inline errors?"
 msgstr ""
 
-#: edd-purchase-limit.php:278
+#: edd-purchase-limit.php:250
 msgid "Standard"
 msgstr ""
 
-#: edd-purchase-limit.php:279
+#: edd-purchase-limit.php:251
 msgid "Redirect"
 msgstr ""
 
-#: edd-purchase-limit.php:285
+#: edd-purchase-limit.php:257
 msgid "Error Message"
 msgstr ""
 
-#: edd-purchase-limit.php:286
+#: edd-purchase-limit.php:258
 msgid "Enter the text you want to use for the error message"
 msgstr ""
 
-#: edd-purchase-limit.php:288 includes/functions.php:495
-#: includes/functions.php:506
-#, php-format
+#: edd-purchase-limit.php:260 includes/functions.php:520
+#: includes/functions.php:531
 msgid "This %s is sold out!"
 msgstr ""
 
-#: edd-purchase-limit.php:292
+#: edd-purchase-limit.php:264
 msgid "Error Redirect"
 msgstr ""
 
-#: edd-purchase-limit.php:293
+#: edd-purchase-limit.php:265
 msgid "Where should we redirect on error?"
 msgstr ""
 
-#: edd-purchase-limit.php:319
+#: edd-purchase-limit.php:291
 msgid "Purchase Limit:"
 msgstr ""
 
-#: edd-purchase-limit.php:322
+#: edd-purchase-limit.php:294
 msgid ""
 "Leave blank or set to 0 for unlimited, set to -1 to mark a product as sold "
 "out."
 msgstr ""
 
-#: edd-purchase-limit.php:343
+#: edd-purchase-limit.php:315
 msgid "Restrict Purchases to Date Range:"
 msgstr ""
 
-#: edd-purchase-limit.php:344
+#: edd-purchase-limit.php:316
 msgid "Start Date"
 msgstr ""
 
-#: edd-purchase-limit.php:347
+#: edd-purchase-limit.php:319
 msgid "End Date"
 msgstr ""
 
-#: edd-purchase-limit.php:363
+#: edd-purchase-limit.php:335
 msgid "Purchase Limit"
 msgstr ""
 
-#: edd-purchase-limit.php:402
+#: edd-purchase-limit.php:374
 msgid "Disable product when any item sells out"
 msgstr ""
 
-#: includes/class.s214-edd-activation.php:86
+#: includes/class.s214-edd-activation.php:77
 msgid " requires Easy Digital Downloads! Please activate it to continue!"
 msgstr ""
 
-#: includes/class.s214-edd-activation.php:88
+#: includes/class.s214-edd-activation.php:79
 msgid " requires Easy Digital Downloads! Please install it to continue!"
 msgstr ""
 
-#: includes/functions.php:280 includes/functions.php:293
+#: includes/functions.php:295 includes/functions.php:308
 msgid "Purchase"
 msgstr ""
 
-#: includes/functions.php:564
-#, php-format
+#: includes/functions.php:589
 msgid "The product '%s' is sold out!"
+msgstr ""
+
+#: includes/functions.php:796
+msgid "One or more of the products in your cart is sold out!"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Easy Digital Downloads - Purchase Limit"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://easydigitaldownloads.com/extension/purchase-limit/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Allows site owners to specify max purchase limits on individual products"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Daniel J Griffiths"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://section214.com"
 msgstr ""
