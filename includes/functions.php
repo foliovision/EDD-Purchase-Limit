@@ -740,14 +740,19 @@ add_action( 'edd_purchase_link_top', 'edd_pl_download_purchase_form_quantity_fie
 function edd_pl_checkout_errors( $valid_data, $posted ) {
     global $edd_prices_sold_out;
 
-    $cart = edd_get_cart_contents();
-    $scope = edd_get_option( 'edd_purchase_limit_scope' ) ? edd_get_option( 'edd_purchase_limit_scope' ) : 'site-wide';
-    $error = false;
+    $cart   = edd_get_cart_contents();
+    $scope  = edd_get_option( 'edd_purchase_limit_scope' ) ? edd_get_option( 'edd_purchase_limit_scope' ) : 'site-wide';
+    $errors = array();
 
     foreach( $cart as $item ) {
         if( edd_has_variable_prices( $item['id'] ) ) {
             if( edd_pl_is_item_sold_out( $item['id'], $item['options']['price_id'], false, false ) ) {
-                $error = true;
+                $errors[] = array(
+                    'id'    => $item['id'],
+                    'price' => $item['options']['price_id'],
+                    'type'  => 'soldout',
+                    'avail' => null
+                );
             }
         } else {
             $max_purchases = edd_pl_get_file_purchase_limit( $item['id'] );
@@ -756,20 +761,24 @@ function edd_pl_checkout_errors( $valid_data, $posted ) {
                 $purchases = edd_get_download_sales_stats( $item['id'] );
 
                 if( ( $max_purchases && $purchases >= $max_purchases ) || ! empty( $edd_prices_sold_out ) ) {
-                    $error = true;
-                } elseif( is_user_logged_in() ) {
-                    $purchases = edd_pl_get_user_purchase_count( get_current_user_id(), $item['id'] );
-
-                    if( ( $max_purchases && $purchases >= $max_purchases ) || ! empty( $edd_prices_sold_out ) ) {
-                        $error = true;
-                    }
+                    $errors[] = array(
+                        'id'    => $item['id'],
+                        'price' => null,
+                        'type'  => 'soldout',
+                        'avail' => null
+                    );
                 }
             } else {
                 if( is_user_logged_in() ) {
                     $purchases = edd_pl_get_user_purchase_count( get_current_user_id(), $item['id'] );
 
                     if( ( $max_purchases && $purchases >= $max_purchases ) || ! empty( $edd_prices_sold_out ) ) {
-                        $error = true;
+                        $errors[] = array(
+                            'id'    => $item['id'],
+                            'price' => null,
+                            'type'  => 'soldout',
+                            'avail' => null
+                        );
                     }
                 }
             }
@@ -783,17 +792,31 @@ function edd_pl_checkout_errors( $valid_data, $posted ) {
 
             if( $max_purchases > 0 ) {
                 $cart_qty = edd_get_cart_item_quantity( $item['id'] );
-                $purchases = $purchases + $cart_qty;
+                $total = $purchases + $cart_qty;
 
-                if( $purchases > $max_purchases ) {
-                    $error = true;
+                if( $total > $max_purchases ) {
+                    $errors[] = array(
+                        'id'    => $item['id'],
+                        'price' => ( edd_has_variable_prices( $item['id'] ) ? $item['options']['price_id'] : null ),
+                        'type'  => 'toomany',
+                        'avail' => $max_purchases - $purchases
+                    );
                 }
             }
         }
     }
 
-    if( $error ) {
-        edd_set_error( 'purchase_limit_reached', __( 'One or more of the products in your cart is sold out!', 'edd-purchase-limit' ) );
+    if( count( $errors ) > 0 ) {
+        foreach( $errors as $error ) {
+            $product = get_post( $error['id'] );
+
+            if( $error['type'] == 'soldout' ) {
+                edd_set_error( 'purchase_limit_reached', sprintf( __( 'The %s "%s" is sold out!', 'edd-purchase-limit' ), strtolower( edd_get_label_singular() ), $product->post_title ) );
+            } elseif( $error['type'] == 'toomany' ) {
+                edd_set_error( 'purchase_limit_exceeded', sprintf( _n( 'There is only %s available for the %s "%s"!', 'There are only %s available for the %s "%s"!', $error['avail'], 'edd-purchase-limit' ), $error['avail'], strtolower( edd_get_label_singular() ), $product->post_title ) );
+            }
+        }
     }
+    exit;
 }
 add_action( 'edd_checkout_error_checks', 'edd_pl_checkout_errors', 10, 2 );
