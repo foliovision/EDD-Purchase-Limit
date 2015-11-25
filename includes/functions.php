@@ -120,11 +120,11 @@ function edd_pl_is_item_sold_out( $download_id = 0, $price_id = 0, $user_email =
 
     $max_purchases = edd_pl_get_file_purchase_limit( $download_id, null, $price_id );
     $purchased = edd_pl_get_file_purchases( $download_id, $price_id );
-    
+
     if( ( $purchased >= $max_purchases && $max_purchases > 0 ) || $max_purchases == -1 ) {
         $sold_out = true;
     }
-    
+
     if( edd_item_in_cart( $download_id, array( 'price_id' => $price_id ) ) ) {
         $purchased++;
 
@@ -220,13 +220,13 @@ function edd_pl_override_purchase_button( $purchase_form, $args ) {
 
     if( $scope == 'site-wide' ) {
         $purchases = edd_get_download_sales_stats( $args['download_id'] );
-        
+
         if( ( $max_purchases && $purchases >= $max_purchases ) || !empty( $edd_prices_sold_out ) ) {
             $is_sold_out = true;
         }
     } elseif( is_user_logged_in() ) {
         $purchases = edd_pl_get_user_purchase_count( get_current_user_id(), $args['download_id'] );
-        
+
         if( ( $max_purchases && $purchases >= $max_purchases ) || !empty( $edd_prices_sold_out ) ) {
             $is_sold_out = true;
         }
@@ -783,7 +783,7 @@ function edd_pl_checkout_errors( $valid_data, $posted ) {
                 }
             }
         }
-        
+
         if( edd_item_in_cart( $item['id'] ) ) {
             if( edd_has_variable_prices( $item['id'] ) ) {
                 $max_purchases = edd_pl_get_file_purchase_limit( $item['id'], null, $item['options']['price_id'] );
@@ -817,6 +817,5 @@ function edd_pl_checkout_errors( $valid_data, $posted ) {
             }
         }
     }
-    exit;
 }
 add_action( 'edd_checkout_error_checks', 'edd_pl_checkout_errors', 10, 2 );
