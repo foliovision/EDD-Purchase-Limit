@@ -377,7 +377,9 @@ function edd_pl_override_variable_pricing( $download_id = 0 ) {
             }
 
             foreach( $prices as $price_id => $price_data ) {
-
+				
+				$checked_key = isset( $_GET['price_option'] ) ? absint( $_GET['price_option'] ) : edd_get_default_variable_price( $download_id );
+				
                 // Output label
                 echo '<li id="edd_price_option_' . $download_id . '_' . sanitize_key( $price_data['name'] ) . '">';
 
@@ -407,13 +409,13 @@ function edd_pl_override_variable_pricing( $download_id = 0 ) {
 
                     printf(
                         '<label for="%3$s"><input type="%2$s" %1$s name="edd_options[price_id][]" id="%3$s" class="%4$s" value="%5$s" %7$s/> %6$s</label>',
-                        checked( apply_filters( 'edd_price_option_checked', 0, $download_id, $price_id ), $price_id, false ),
+                        checked( apply_filters( 'edd_price_option_checked', $checked_key, $download_id, $price_id ), $price_id, false ),
                         $type,
                         esc_attr( 'edd_price_option_' . $download_id . '_' . $price_id ),
                         esc_attr( 'edd_price_option_' . $download_id ),
                         esc_attr( $price_id ),
                         '<span class="edd_price_option_name">' . esc_html( $price_data['name'] ) . '</span><span class="edd_price_option_sep">&nbsp;&ndash;&nbsp;</span><span class="edd_price_option_price">' . edd_currency_filter( edd_format_amount( $price_data['amount'] ) ) . '</span>' . ( isset( $remaining_output ) ? $remaining_output : '' ),
-                        checked( isset( $_GET['price_option'] ), $price_id, false )
+                        checked( apply_filters( 'edd_price_option_checked', $checked_key, $download_id, $price_id ), $price_id, false )
                     );
                 }
 
@@ -429,13 +431,13 @@ function edd_pl_override_variable_pricing( $download_id = 0 ) {
                 // Output option or 'sold out'
                 printf(
                     '<label for="%3$s"><input type="%2$s" %1$s name="edd_options[price_id][]" id="%3$s" class="%4$s" value="%5$s" %7$s/> %6$s</label>',
-                    checked( apply_filters( 'edd_price_option_checked', 0, $download_id, $price_id ), $price_id, false ),
+                    checked( apply_filters( 'edd_price_option_checked', $checked_key, $download_id, $price_id ), $price_id, false ),
                     $type,
                     esc_attr( 'edd_price_option_' . $download_id . '_' . $price_id ),
                     esc_attr( 'edd_price_option_' . $download_id ),
                     esc_attr( $price_id ),
                     '<span class="edd_price_option_name">' . esc_html( $price_data['name'] ) . '</span><span class="edd_price_option_sep">&nbsp;&ndash;&nbsp;</span><span class="edd_price_option_price">' . edd_currency_filter( edd_format_amount( $price_data['amount'] ) ) . '</span>',
-                    checked( isset( $_GET['price_option'] ), $price_id, false )
+                    checked( apply_filters( 'edd_price_option_checked', $checked_key, $download_id, $price_id ), $price_id, false )
                 );
 
                 remove_action( 'edd_after_price_option', 'edd_variable_price_quantity_field', 10, 3 );
