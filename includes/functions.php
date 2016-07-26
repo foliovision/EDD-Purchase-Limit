@@ -55,11 +55,11 @@ function edd_pl_get_file_purchases( $download_id = 0, $price_id = 0, $user_email
 		        foreach( $payment_data->cart_details as $cart_item ) {
 		        	if( edd_has_variable_prices( $download_id ) ) {
 		            	if( isset( $cart_item['item_number']['options']['price_id'] ) && (int) $cart_item['item_number']['options']['price_id'] == (int) $price_id ) {
-		                	$purchased++;
+		                	$purchased = $purchased + $cart_item['item_number']['options']['quantity'];
 		                }
 		            } else {
 		            	if( isset( $cart_item['item_number'] ) ) {
-		            		$purchased++;
+		            		$purchased = $purchased + $cart_item['item_number']['options']['quantity'];
 		            	}
 		            }
 		        }
@@ -377,9 +377,9 @@ function edd_pl_override_variable_pricing( $download_id = 0 ) {
             }
 
             foreach( $prices as $price_id => $price_data ) {
-				
+
 				$checked_key = isset( $_GET['price_option'] ) ? absint( $_GET['price_option'] ) : edd_get_default_variable_price( $download_id );
-				
+
                 // Output label
                 echo '<li id="edd_price_option_' . $download_id . '_' . sanitize_key( $price_data['name'] ) . '">';
 
