@@ -56,6 +56,8 @@ function edd_pl_get_file_purchases( $download_id = 0, $price_id = 0, $user_email
 		        	if( edd_has_variable_prices( $download_id ) ) {
 		            	if( isset( $cart_item['item_number']['options']['price_id'] ) && (int) $cart_item['item_number']['options']['price_id'] == (int) $price_id ) {
 		                	$purchased = $purchased + $cart_item['item_number']['options']['quantity'];
+		                } else {
+		                	$purchased = $purchased + 1;
 		                }
 		            } else {
 		            	if( isset( $cart_item['item_number'] ) ) {
