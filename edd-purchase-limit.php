@@ -91,6 +91,7 @@ if( ! class_exists( 'EDD_Purchase_Limit' ) ) {
 
 			if( is_admin() ) {
 				require_once EDD_PURCHASE_LIMIT_DIR . 'includes/admin/settings/register.php';
+				require_once EDD_PURCHASE_LIMIT_DIR . 'includes/admin/downloads/meta-boxes.php';
 			}
 		}
 
@@ -107,22 +108,6 @@ if( ! class_exists( 'EDD_Purchase_Limit' ) ) {
 			if( class_exists( 'EDD_License' ) ) {
 				$license = new EDD_License( __FILE__, 'Purchase Limit', EDD_PURCHASE_LIMIT_VERSION, 'Daniel J Griffiths' );
 			}
-
-			// Add default purchase limit field to downloads config metabox
-			add_action( 'edd_meta_box_fields', array( $this, 'pl_metabox_row' ), 20 );
-			add_action( 'edd_meta_box_fields', array( $this, 'date_metabox_row' ), 20 );
-
-			// Add header to variable pricing table
-			add_action( 'edd_download_price_table_head', array( $this, 'price_header' ), 10 );
-
-			// Add options to variable pricing table
-			add_action( 'edd_download_price_table_row', array( $this, 'price_row' ), 20, 3 );
-
-			// Add variable pricing global disable field
-			add_action( 'edd_after_price_field', array( $this, 'variable_disable' ), 20, 1 );
-
-			// Add purchase limit to saved fields
-			add_filter( 'edd_metabox_fields_save', array( $this, 'save_fields' ) );
 		}
 
 
@@ -157,128 +142,6 @@ if( ! class_exists( 'EDD_Purchase_Limit' ) ) {
 				load_plugin_textdomain( 'edd-purchase-limit', false, $lang_dir );
 			}
 		}
-
-
-		/**
-		 * Render the purchase limit row in the download configuration metabox
-		 *
-		 * @access      public
-		 * @since       1.0.0
-		 * @param       int $post_id The ID of this download
-		 * @return      void
-		 */
-		public function pl_metabox_row( $post_id = 0 ) {
-			$enabled        = edd_has_variable_prices( $post_id );
-			$display        = $enabled ? ' style="display: none;"' : '';
-			$purchase_limit = edd_pl_get_file_purchase_limit( $post_id, 'standard' );
-
-			echo '<div id="edd_purchase_limit"' . $display . '>';
-			echo '<p><strong>' . __( 'Purchase Limit:', 'edd-purchase-limit' ) . '</strong></p>';
-			echo '<label for="edd_purchase_limit_field">';
-			echo '<input type="text" name="_edd_purchase_limit" id="edd_purchase_limit_field" value="' . esc_attr( $purchase_limit ) . '" size="30" style="width: 100px;" placeholder="0" /> ';
-			echo __( 'Leave blank or set to 0 for unlimited, set to -1 to mark a product as sold out.', 'edd-purchase-limit' );
-			echo '</label>';
-			echo '</div>';
-		}
-
-
-		/**
-		 * Render the date restriction row in the download configuration metabox
-		 *
-		 * @access      public
-		 * @since       1.0.6
-		 * @param       int $post_id The ID of this download
-		 * @return      void
-		 */
-		public function date_metabox_row( $post_id = 0 ) {
-			if( ! edd_get_option( 'edd_purchase_limit_restrict_date' ) ) return;
-
-			$start_date = get_post_meta( $post_id, '_edd_purchase_limit_start_date', true );
-			$end_date   = get_post_meta( $post_id, '_edd_purchase_limit_end_date', true );
-
-			echo '<div id="edd_purchase_limit_date_range">';
-			echo '<p><strong>' . __( 'Restrict Purchases to Date Range:', 'edd-purchase-limit' ) . '</strong></p>';
-			echo '<label for="edd_purchase_limit_start_date">' . __( 'Start Date', 'edd-purchase-limit' ) . ' ';
-			echo '<input type="text" name="_edd_purchase_limit_start_date" id="edd_purchase_limit_start_date" class="edd_pl_datepicker" value="' . esc_attr( $start_date ) . '" placeholder="mm/dd/yyyy" />';
-			echo '</label>';
-			echo '<label for="edd_purchase_limit_end_date" style="margin-left: 15px;">' . __( 'End Date', 'edd-purchase-limit' ) . ' ';
-			echo '<input type="text" name="_edd_purchase_limit_end_date" id="edd_purchase_limit_end_date" class="edd_pl_datepicker" value="' . esc_attr( $end_date ) . '" placeholder="mm/dd/yyyy" />';
-			echo '</label>';
-			echo '</div>';
-		}
-
-
-		/**
-		 * Add the header cell to the variable pricing table
-		 *
-		 * @access      public
-		 * @since       1.0.4
-		 * @param       int $post_id The ID of this download
-		 * @return      void
-		 */
-		public function price_header( $post_id = 0 ) {
-			echo '<th class="edd_purchase_limit_var_title">' . __( 'Purchase Limit', 'edd-purchase-limit' ) . '</th>';
-		}
-
-
-		/**
-		 * Add the table cell to the variable pricing table
-		 *
-		 * @access      public
-		 * @since       1.0.4
-		 * @param       int $post_id The ID of this download
-		 * @param       int $price_key The key of this download item
-		 * @param       array $args Args to pass for this row
-		 * @return      void
-		 */
-		public function price_row( $post_id = 0, $price_key = 0, $args = array() ) {
-			$prices         = edd_get_variable_prices( $post_id );
-			$purchase_limit = edd_pl_get_file_purchase_limit( $post_id, 'variable', $price_key );
-
-			echo '<td class="edd_purchase_limit_var_field">';
-			echo '<label for="edd_variable_prices[' . $price_key . '][purchase_limit]">';
-			echo '<input type="text" value="' . $purchase_limit . '" id="edd_variable_prices[' . $price_key . '][purchase_limit]" name="edd_variable_prices[' . $price_key . '][purchase_limit]" style="float:left;width:100px;" placeholder="0" />';
-			echo '</label>';
-			echo '</td>';
-		}
-
-
-		/**
-		 * Add field to allow globally disabling product on sold out variable
-		 *
-		 * @access      public
-		 * @since       1.2.7
-		 * @param       int $post_id The ID of this post
-		 * @return      void
-		 */
-		public function variable_disable( $post_id = 0 ) {
-			$disabled = get_post_meta( $post_id, '_edd_purchase_limit_variable_disable', true );
-
-			echo '<p>';
-			echo '<input type="checkbox" name="_edd_purchase_limit_variable_disable" id="_edd_purchase_limit_variable_disable" value="1" ' . checked( true, $disabled, false ) . ' />&nbsp;';
-			echo '<label for="_edd_purchase_limit_variable_disable">' . __( 'Disable product when any item sells out', 'edd-purchase-limit' ) . '</label>';
-			echo '</p>';
-		}
-
-
-		/**
-		 * Add purchase limit to saved fields
-		 *
-		 * @access      public
-		 * @since       1.0.0
-		 * @param       array $fields The current fields EDD is saving
-		 * @return      array The updated fields to save
-		 */
-		public function save_fields( $fields ) {
-			$extra_fields = array(
-				'_edd_purchase_limit',
-				'_edd_purchase_limit_start_date',
-				'_edd_purchase_limit_end_date',
-				'_edd_purchase_limit_variable_disable'
-			);
-
-			return array_merge( $fields, $extra_fields );
-		}
 	}
 }
 
@@ -290,7 +153,7 @@ if( ! class_exists( 'EDD_Purchase_Limit' ) ) {
  * @since       1.0.0
  * @return      \EDD_Purchase_Limit The one true EDD_Purchase_Limit
  */
-function EDD_Purchase_Limit() {
+function edd_purchase_limit() {
 	if( ! class_exists( 'Easy_Digital_Downloads' ) ) {
 		if( ! class_exists( 'S214_EDD_Activation' ) ) {
 			require_once( 'includes/class.s214-edd-activation.php' );
@@ -304,4 +167,4 @@ function EDD_Purchase_Limit() {
 		return EDD_Purchase_Limit::instance();
 	}
 }
-add_action( 'plugins_loaded', 'EDD_Purchase_Limit' );
+add_action( 'plugins_loaded', 'edd_purchase_limit' );
