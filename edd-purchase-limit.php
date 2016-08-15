@@ -88,6 +88,10 @@ if( ! class_exists( 'EDD_Purchase_Limit' ) ) {
 			require_once EDD_PURCHASE_LIMIT_DIR . 'includes/scripts.php';
 			require_once EDD_PURCHASE_LIMIT_DIR . 'includes/functions.php';
 			require_once EDD_PURCHASE_LIMIT_DIR . 'includes/shortcodes.php';
+
+			if( is_admin() ) {
+				require_once EDD_PURCHASE_LIMIT_DIR . 'includes/admin/settings/register.php';
+			}
 		}
 
 
@@ -99,9 +103,6 @@ if( ! class_exists( 'EDD_Purchase_Limit' ) ) {
 		 * @return      void
 		 */
 		private function hooks() {
-			// Register settings
-			add_filter( 'edd_settings_extensions', array( $this, 'settings' ), 1 );
-
 			// Handle licensing
 			if( class_exists( 'EDD_License' ) ) {
 				$license = new EDD_License( __FILE__, 'Purchase Limit', EDD_PURCHASE_LIMIT_VERSION, 'Daniel J Griffiths' );
@@ -155,124 +156,6 @@ if( ! class_exists( 'EDD_Purchase_Limit' ) ) {
 				// Load the default language files
 				load_plugin_textdomain( 'edd-purchase-limit', false, $lang_dir );
 			}
-		}
-
-
-		/**
-		 * Add settings
-		 *
-		 * @access      public
-		 * @since       1.0.0
-		 * @param       array $settings The existing EDD settings array
-		 * @return      array The modified EDD settings array
-		 */
-		public function settings( $settings ) {
-			$new_settings = array(
-				array(
-					'id'   => 'edd_purchase_limit_settings',
-					'name' => '<strong>' . __( 'Purchase Limit Settings', 'edd-purchase-limit' ) . '</strong>',
-					'desc' => __( 'Configure Purchase Limit Settings', 'edd-purchase-limit' ),
-					'type' => 'header',
-				),
-				array(
-					'id'   => 'edd_purchase_limit_sold_out_label',
-					'name' => __( 'Sold Out Button Label', 'edd-purchase-limit' ),
-					'desc' => __( 'Enter the text you want to use for the button on sold out items', 'edd-purchase-limit' ),
-					'type' => 'text',
-					'size' => 'regular',
-					'std'  => __( 'Sold Out', 'edd-purchase-limit' )
-				),
-				array(
-					'id'      => 'edd_purchase_limit_scope',
-					'name'    => __( 'Scope', 'edd-purchase-limit' ),
-					'desc'    => __( 'Choose whether you want purchase limits to apply site-wide or per-user', 'edd-purchase-limit' ),
-					'type'    => 'select',
-					'options' => array(
-						'site-wide' => __( 'Site Wide', 'edd-purchase-limit' ),
-						'per-user'  => __( 'Per User', 'edd-purchase-limit' )
-					),
-					'std' => 'site-wide'
-				),
-				array(
-					'id'   => 'edd_purchase_limit_show_counts',
-					'name' => __( 'Show Remaining Purchases', 'edd-purchase-limit' ),
-					'desc' => __( 'Specify whether or not you want to display remaining purchase counts on downloads', 'edd-purchase-limit' ),
-					'type' => 'checkbox'
-				),
-				array(
-					'id'   => 'edd_purchase_limit_remaining_label',
-					'name' => __( 'Remaining Purchases Label', 'edd-purchase-limit' ),
-					'desc' => __( 'Enter the text you want to use for the remaining purchases label', 'edd-purchase-limit' ),
-					'type' => 'text',
-					'size' => 'regular',
-					'std'  => __( 'Remaining', 'edd-purchase-limit' )
-				),
-				array(
-					'id'   => 'edd_purchase_limit_restrict_date',
-					'name' => __( 'Enable Date Restriction', 'edd-purchase-limit' ),
-					'desc' => __( 'Specify whether or not to enable restriction by date range', 'edd-purchase-limit' ),
-					'type' => 'checkbox'
-				),
-				array(
-					'id'   => 'edd_purchase_limit_g_start_date',
-					'name' => __( 'Global Start Date', 'edd-purchase-limit' ),
-					'desc' => __( 'Define a global start date', 'edd-purchase-limit' ),
-					'type' => 'text',
-					'size' => 'regular'
-				),
-				array(
-					'id'   => 'edd_purchase_limit_g_end_date',
-					'name' => __( 'Global End Date', 'edd-purchase-limit' ),
-					'desc' => __( 'Define a global end date', 'edd-purchase-limit' ),
-					'type' => 'text',
-					'size' => 'regular'
-				),
-				array(
-					'id'   => 'edd_purchase_limit_pre_date_label',
-					'name' => __( 'Pre-Date Label', 'edd-purchase-limit' ),
-					'desc' => __( 'Enter the text you want to use for items which are not yet available', 'edd-purchase-limit' ),
-					'type' => 'text',
-					'size' => 'regular',
-					'std'  => __( 'This product is not yet available!', 'edd-purchase-limit' )
-				),
-				array(
-					'id'   => 'edd_purchase_limit_post_date_label',
-					'name' => __( 'Post-Date Label', 'edd-purchase-limit' ),
-					'desc' => __( 'Enter the text you want to use for items which are no longer available', 'edd-purchase-limit' ),
-					'type' => 'text',
-					'size' => 'regular',
-					'std'  => __( 'This product is no longer available!', 'edd-purchase-limit' )
-				),
-				array(
-					'id'      => 'edd_purchase_limit_error_handler',
-					'name'    => __( 'Error Handler', 'edd-purchase-limit' ),
-					'desc'    => __( 'How should we handle non-inline errors?', 'edd-purchase-limit' ),
-					'type'    => 'select',
-					'options' => array(
-						'std'      => __( 'Standard', 'edd-purchase-limit' ),
-						'redirect' => __( 'Redirect', 'edd-purchase-limit' )
-					),
-					'std' => 'std'
-				),
-				array(
-					'id'   => 'edd_purchase_limit_error_message',
-					'name' => __( 'Error Message', 'edd-purchase-limit' ),
-					'desc' => __( 'Enter the text you want to use for the error message', 'edd-purchase-limit' ),
-					'type' => 'text',
-					'std'  => sprintf( __( 'This %s is sold out!', 'edd-purchase-limit' ), edd_get_label_singular( true ) )
-				),
-				array(
-					'id'      => 'edd_purchase_limit_redirect_url',
-					'name'    => __( 'Error Redirect', 'edd-purchase-limit' ),
-					'desc'    => __( 'Where should we redirect on error?', 'edd-purchase-limit' ),
-					'type'    => 'select',
-					'options' => edd_get_pages()
-				)
-			);
-
-			$settings = array_merge( $settings, $new_settings );
-
-			return $settings;
 		}
 
 
