@@ -156,7 +156,7 @@ if( ! class_exists( 'EDD_Purchase_Limit' ) ) {
 function edd_purchase_limit() {
 	if( ! class_exists( 'Easy_Digital_Downloads' ) ) {
 		if( ! class_exists( 'S214_EDD_Activation' ) ) {
-			require_once( 'includes/class.s214-edd-activation.php' );
+			require_once 'includes/libraries/class.s214-edd-activation.php';
 		}
 
 		$activation = new S214_EDD_Activation( plugin_dir_path( __FILE__ ), basename( __FILE__ ) );
