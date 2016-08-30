@@ -54,14 +54,19 @@ function edd_pl_get_file_purchases( $download_id = 0, $price_id = 0, $user_email
 			if( is_object( $payment_data ) && property_exists( $payment_data, 'cart_details' ) && is_array( $payment_data->cart_details ) ) {
 				foreach( $payment_data->cart_details as $cart_item ) {
 					if( edd_has_variable_prices( $download_id ) ) {
-						if( isset( $cart_item['item_number']['options']['price_id'] ) && (int) $cart_item['item_number']['options']['price_id'] == (int) $price_id ) {
+						if( isset( $cart_item['item_number']['options']['quantity'] ) ) {
 							$purchased = $purchased + $cart_item['item_number']['options']['quantity'];
 						} else {
 							$purchased = $purchased + 1;
 						}
 					} else {
 						if( isset( $cart_item['item_number'] ) ) {
-							$purchased = $purchased + $cart_item['item_number']['options']['quantity'];
+							if( isset( $cart_item['item_number']['options']['quantity'] ) ) {
+								$purchased = $purchased + $cart_item['item_number']['options']['quantity'];
+							} else {
+								// This REALLY shouldn't happen
+								$purchased = $purchased + 1;
+							}
 						}
 					}
 				}
