@@ -36,6 +36,8 @@ function edd_pl_get_file_purchases( $download_id = 0, $price_id = 0, $user_email
 
 	// Override global search if site-wide isn't selected
 	if( $scope != 'site-wide' ) {
+        if( !is_user_logged_in() ) return 0;
+
 		if( ! $user_email ) {
 			$current_user = wp_get_current_user();
 		}
